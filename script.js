@@ -20,8 +20,44 @@
     batt.classList.toggle('full', p >= 99);
     nav.classList.toggle('scrolled', scrollY > 8);
   }
-  addEventListener('scroll', onScroll, { passive: true });
+  /* ---------- nav: highlight the link for the section in view ---------- */
+  const navBar = $('nav', nav);
+  const pill = document.createElement('span');
+  pill.className = 'nav-pill';
+  pill.setAttribute('aria-hidden', 'true');
+  navBar.prepend(pill);
+  const links = $$('a[href^="#"]', navBar);
+  // Every section in page order; ones without a nav link clear the highlight.
+  const spySections = $$('main > section[id]');
+  let current = null;
+  function setCurrent(id) {
+    if (id === current) return;
+    current = id;
+    const link = links.find((a) => a.getAttribute('href') === '#' + id);
+    links.forEach((a) => {
+      const on = a === link;
+      a.classList.toggle('active', on);
+      if (on) a.setAttribute('aria-current', 'location'); else a.removeAttribute('aria-current');
+    });
+    if (link) {
+      pill.style.width = link.offsetWidth + 'px';
+      pill.style.transform = `translateX(${link.offsetLeft}px)`;
+      pill.classList.add('on');
+    } else {
+      pill.classList.remove('on');
+    }
+  }
+  function spy() {
+    const line = innerHeight * 0.4;
+    let id = null;
+    for (const s of spySections) if (s.getBoundingClientRect().top <= line) id = s.id;
+    setCurrent(id); // sections with no nav link (Autocharge, devices) clear the highlight
+  }
+  addEventListener('resize', () => { const id = current; current = null; setCurrent(id); });
+
+  addEventListener('scroll', () => { onScroll(); spy(); }, { passive: true });
   onScroll();
+  spy();
 
   /* ---------- hero: live session ----------
      Raidurg Metro, 120 kW DC, ₹24/kWh + 18% GST = ₹28.32/kWh. ₹500 held.

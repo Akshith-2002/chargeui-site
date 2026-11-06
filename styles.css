@@ -70,9 +70,13 @@ h3 { font-size: 21px; line-height: 1.25; font-weight: 700; letter-spacing: -0.01
 .nav.scrolled { border-bottom-color: var(--line); }
 .nav-in { display: flex; align-items: center; gap: 28px; height: 70px; }
 .nav-logo img { height: 38px; width: auto; }
-.nav nav { display: flex; gap: 26px; margin-left: auto; }
-.nav nav a { text-decoration: none; color: var(--ink-2); font-weight: 500; font-size: 15px; }
-.nav nav a:hover { color: var(--royal); }
+.nav nav { position: relative; display: flex; gap: 4px; margin-left: auto; }
+.nav nav a { position: relative; z-index: 1; padding: 8px 14px; border-radius: 999px; text-decoration: none; color: var(--ink-2); font-weight: 500; font-size: 15px; transition: color .25s var(--ease), background-color .2s; }
+.nav nav a:hover { background: rgba(0,101,218,.06); color: var(--royal); }
+.nav nav a.active { color: var(--royal); font-weight: 600; background: transparent; }
+/* sliding pill that sits behind the link of the section in view */
+.nav-pill { position: absolute; top: 0; left: 0; height: 100%; width: 0; border-radius: 999px; background: var(--ice); box-shadow: inset 0 0 0 1px rgba(0,101,218,.18), 0 4px 14px rgba(0,101,218,.12); opacity: 0; pointer-events: none; transition: transform .45s var(--ease), width .45s var(--ease), opacity .3s; }
+.nav-pill.on { opacity: 1; }
 .nav-batt { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 700; color: var(--royal); font-variant-numeric: tabular-nums; }
 .batt { position: relative; width: 30px; height: 15px; border: 2px solid var(--royal); border-radius: 4px; padding: 1.5px; }
 .batt::after { content: ""; position: absolute; right: -5px; top: 3px; width: 3px; height: 5px; background: var(--royal); border-radius: 0 2px 2px 0; }
