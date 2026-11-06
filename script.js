@@ -177,6 +177,20 @@
       { d: 'Thu', n: 5, gross: 9310 },
       { d: 'Fri', n: 6, gross: 11080, today: true },
     ];
+    // Amounts count from their previous value to the new one.
+    const countTo = (el, to, prefix) => {
+      const from = el._v || 0;
+      el._v = to;
+      if (reduced) { el.textContent = prefix + inr(to); return; }
+      cancelAnimationFrame(el._raf);
+      const t0 = performance.now();
+      const step = (now) => {
+        const k = Math.min(1, (now - t0) / 600);
+        el.textContent = prefix + inr(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+        if (k < 1) el._raf = requestAnimationFrame(step);
+      };
+      el._raf = requestAnimationFrame(step);
+    };
     const box = $('#st-days');
     const btns = DAYS.map((x, i) => {
       const b = document.createElement('button');
@@ -193,10 +207,10 @@
       const proc = x.gross * 0.02, plat = x.gross * 0.03, net = x.gross - proc - plat;
       const kwh = Math.round(x.gross / 16.52); // ₹14/kWh + 18% GST
       btns.forEach((b, k) => { b.classList.toggle('on', k === i); b.setAttribute('aria-selected', k === i); });
-      $('#st-gross').textContent = inr(x.gross);
-      $('#st-proc').textContent = '− ' + inr(proc);
-      $('#st-plat').textContent = '− ' + inr(plat);
-      $('#st-net').textContent = inr(net);
+      countTo($('#st-gross'), x.gross, '');
+      countTo($('#st-proc'), proc, '− ');
+      countTo($('#st-plat'), plat, '− ');
+      countTo($('#st-net'), net, '');
       $('#st-kwh').textContent = kwh.toLocaleString('en-IN');
       $('#st-sessions').textContent = Math.round(kwh / 13);
       const status = $('#st-status');
@@ -205,6 +219,70 @@
       $('#st-when').textContent = x.today ? 'Settles to your bank tomorrow morning' : `Credited to your bank on ${DAYS[i + 1].d} ${DAYS[i + 1].n} Nov`;
     }
     pick(0);
+  }
+
+  /* ---------- scroll reveals: groups of cards fade up one after another ---------- */
+  if (!reduced && 'IntersectionObserver' in window) {
+    const groups = ['.pillars > *', '.pos-grid > li', '.why-grid > li', '.about > div', '.modules > div', '.ind-cards > li', '.infra-grid > li', '.phones > li', '.fr-list > li', '.vs-row', '.usp-block', '.flow', '.energy'];
+    const rio = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add('in'); rio.unobserve(e.target); }
+    }), { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    groups.forEach((sel) => $$(sel).forEach((el, i) => {
+      if (el.getBoundingClientRect().top < innerHeight * 0.9) return; // already on screen at load: leave it alone
+      el.classList.add('rv');
+      el.style.setProperty('--d', i % 8);
+      rio.observe(el);
+    }));
+    // franchise journey: draw the line, then light up each step
+    $$('.steps').forEach((ol) => {
+      ol.classList.add('anim');
+      $$('li', ol).forEach((li, i) => li.style.setProperty('--d', i));
+      onView(ol, (v) => { if (v) ol.classList.add('in'); }, { threshold: 0.3 });
+    });
+  }
+
+  /* ---------- hero: dashboard and phone tilt gently with the pointer ---------- */
+  const heroVis = $('.hero-visual');
+  if (heroVis && !reduced && matchMedia('(pointer: fine)').matches) {
+    const hero = $('.hero');
+    let raf = 0;
+    hero.addEventListener('pointermove', (e) => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const r = hero.getBoundingClientRect();
+        heroVis.style.setProperty('--px', ((e.clientX - r.left) / r.width - 0.5).toFixed(3));
+        heroVis.style.setProperty('--py', ((e.clientY - r.top) / r.height - 0.5).toFixed(3));
+      });
+    });
+    hero.addEventListener('pointerleave', () => { heroVis.style.setProperty('--px', 0); heroVis.style.setProperty('--py', 0); });
+  }
+
+  /* ---------- CMS screen gallery: rotates on its own, a click pauses it briefly ---------- */
+  const gal = $('#gallery');
+  if (gal) {
+    const gtabs = $$('.gtab', gal), gimgs = $$('.g-stage img', gal);
+    const gcap = $('#g-cap'), gpath = $('#g-path'), gbar = $('#g-bar');
+    const PATHS = ['dashboard', 'analytics', 'alarms', 'transactions', 'assets/stations', 'sessions', 'tickets', 'white-label', 'broadcasts'];
+    const MS = 5000;
+    let gi = 0, gtimer = null, gvisible = false;
+    gal.style.setProperty('--g-ms', MS + 'ms');
+    function gshow(i) {
+      gi = i;
+      gtabs.forEach((b, k) => { b.classList.toggle('on', k === i); b.setAttribute('aria-selected', k === i); });
+      gimgs.forEach((im, k) => { im.classList.toggle('on', k === i); if (Math.abs(k - i) <= 1) im.loading = 'eager'; });
+      gcap.textContent = gimgs[i].dataset.cap;
+      gpath.textContent = PATHS[i];
+      const row = gtabs[i].parentElement, tb = gtabs[i];
+      if (row.scrollWidth > row.clientWidth) row.scrollTo({ left: tb.offsetLeft - (row.clientWidth - tb.offsetWidth) / 2, behavior: 'smooth' });
+      gbar.classList.remove('run'); void gbar.offsetWidth;
+      if (!reduced && gvisible) gbar.classList.add('run');
+    }
+    function gnext(delay) {
+      clearTimeout(gtimer);
+      gtimer = setTimeout(() => { if (gvisible) gshow((gi + 1) % gimgs.length); gnext(MS); }, delay);
+    }
+    gtabs.forEach((b, k) => b.addEventListener('click', () => { gshow(k); gnext(MS * 2); }));
+    if (!reduced) onView(gal, (v) => { const was = gvisible; gvisible = v; if (v && !was) { gshow(gi); gnext(MS); } }, { threshold: 0.25 });
   }
 
   /* ---------- admin screenshot settles flat ---------- */

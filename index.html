@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css?v=5">
+  <link rel="stylesheet" href="styles.css?v=7">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -104,7 +104,7 @@
       <a href="#usp">Advantage</a>
       <a href="#platform">Platform</a>
       <a href="#franchise">Franchise</a>
-      <a href="#app">Driver app</a>
+      <a href="#app">User app</a>
       <a href="#infra">Infrastructure</a>
     </nav>
     <div class="nav-batt" aria-hidden="true" title="How far you've scrolled">
@@ -177,7 +177,8 @@
 
 <!-- ================= POSITIONING ================= -->
 <section class="pos" aria-label="What ChargeUI combines">
-  <div class="wrap">
+  <div class="wrap pos-in">
+    <div>
     <p class="pos-lead">Not just a software provider. ChargeUI brings together four things most charging businesses buy from four different vendors.</p>
     <ul class="pos-grid">
       <li><svg class="ico"><use href="#i-cms"/></svg><b>Software</b><span>CMS, white-label apps and business analytics</span></li>
@@ -185,6 +186,51 @@
       <li><svg class="ico"><use href="#i-bolt"/></svg><b>Electrical infrastructure</b><span>Approvals, HT/LT works, installation, commissioning</span></li>
       <li><svg class="ico"><use href="#i-people"/></svg><b>Business enablement</b><span>Franchise model, partner management, daily settlements</span></li>
     </ul>
+    </div>
+    <figure class="hub" aria-label="Diagram: the ChargeUI CMS at the centre, connected to chargers, the user app, franchise owners, reports, technicians and site power, with data flowing between them.">
+      <svg viewBox="0 0 560 470" role="img">
+        <circle cx="280" cy="230" r="168" class="hub-orbit"/>
+        <g class="hub-lines"><path d="M280.0 98.0 L280.0 160.0"/><path d="M340.6 195.0 L394.3 164.0"/><path d="M340.6 265.0 L394.3 296.0"/><path d="M280.0 300.0 L280.0 362.0"/><path d="M219.4 265.0 L165.7 296.0"/><path d="M165.7 164.0 L219.4 195.0"/></g>
+        <g><path class="hub-flow" style="animation-delay:-0.00s" d="M280.0 98.0 L280.0 160.0"/><path class="hub-flow" style="animation-delay:-0.37s" d="M340.6 195.0 L394.3 164.0"/><path class="hub-flow" style="animation-delay:-0.74s" d="M340.6 265.0 L394.3 296.0"/><path class="hub-flow" style="animation-delay:-1.11s" d="M280.0 300.0 L280.0 362.0"/><path class="hub-flow" style="animation-delay:-1.48s" d="M219.4 265.0 L165.7 296.0"/><path class="hub-flow" style="animation-delay:-1.85s" d="M165.7 164.0 L219.4 195.0"/></g>
+        <circle cx="280" cy="230" r="78" class="hub-ring"/>
+        <circle cx="280" cy="230" r="64" class="hub-core"/>
+        <image href="assets/favicon.png" x="260" y="190" width="40" height="40"/>
+        <text x="280" y="248" class="hub-t1">ChargeUI</text>
+        <text x="280" y="266" class="hub-t2">CMS</text>
+        <g class="hub-node" style="--k:0">
+          <circle cx="280.0" cy="62.0" r="34" class="hn-c"/>
+          <use href="#i-plug" x="267.0" y="49.0" width="26" height="26" class="hn-i"/>
+          <text x="280.0" y="-4.0" class="hn-t">Chargers</text>
+          <text x="280.0" y="14.0" class="hn-s">Live status over OCPP</text>
+        </g><g class="hub-node" style="--k:1">
+          <circle cx="425.5" cy="146.0" r="34" class="hn-c"/>
+          <use href="#i-app" x="412.5" y="133.0" width="26" height="26" class="hn-i"/>
+          <text x="425.5" y="80.0" class="hn-t">User app</text>
+          <text x="425.5" y="98.0" class="hn-s">Find, scan, pay</text>
+        </g><g class="hub-node" style="--k:2">
+          <circle cx="425.5" cy="314.0" r="34" class="hn-c"/>
+          <use href="#i-franchise" x="412.5" y="301.0" width="26" height="26" class="hn-i"/>
+          <text x="425.5" y="370.0" class="hn-t">Franchise owners</text>
+          <text x="425.5" y="388.0" class="hn-s">Daily settlements</text>
+        </g><g class="hub-node" style="--k:3">
+          <circle cx="280.0" cy="398.0" r="34" class="hn-c"/>
+          <use href="#i-chart" x="267.0" y="385.0" width="26" height="26" class="hn-i"/>
+          <text x="280.0" y="454.0" class="hn-t">Reports</text>
+          <text x="280.0" y="472.0" class="hn-s">Revenue and energy</text>
+        </g><g class="hub-node" style="--k:4">
+          <circle cx="134.5" cy="314.0" r="34" class="hn-c"/>
+          <use href="#i-tools" x="121.5" y="301.0" width="26" height="26" class="hn-i"/>
+          <text x="134.5" y="370.0" class="hn-t">Technicians</text>
+          <text x="134.5" y="388.0" class="hn-s">Tickets and fixes</text>
+        </g><g class="hub-node" style="--k:5">
+          <circle cx="134.5" cy="146.0" r="34" class="hn-c"/>
+          <use href="#i-bolt" x="121.5" y="133.0" width="26" height="26" class="hn-i"/>
+          <text x="134.5" y="80.0" class="hn-t">Site power</text>
+          <text x="134.5" y="98.0" class="hn-s">Load balancing</text>
+        </g>
+      </svg>
+    </figure>
+
   </div>
 </section>
 
@@ -369,10 +415,15 @@
       <p>Whether you run 5 chargers or 500, across one site or many cities. This is the ChargeUI CMS, shown with demo data.</p>
     </div>
 
-    <figure class="admin-shot" id="admin">
-      <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>cms.chargeui.in/dashboard</span></div>
-      <img src="assets/screens/admin-dashboard.jpg" alt="ChargeUI CMS dashboard: station and charge point counts, energy, revenue and session charts, charger status, station overview, live map and recent alarms" width="2400" height="1500" loading="lazy">
-    </figure>
+    <div class="gallery" id="gallery">
+      <div class="gtabs" role="tablist" aria-label="CMS screens"><button type="button" class="gtab on" data-i="0" role="tab" aria-selected="true">Dashboard</button><button type="button" class="gtab" data-i="1" role="tab" aria-selected="false">Analytics</button><button type="button" class="gtab" data-i="2" role="tab" aria-selected="false">Alarms</button><button type="button" class="gtab" data-i="3" role="tab" aria-selected="false">Transactions</button><button type="button" class="gtab" data-i="4" role="tab" aria-selected="false">Stations</button><button type="button" class="gtab" data-i="5" role="tab" aria-selected="false">Live sessions</button><button type="button" class="gtab" data-i="6" role="tab" aria-selected="false">Service tickets</button><button type="button" class="gtab" data-i="7" role="tab" aria-selected="false">White label</button><button type="button" class="gtab" data-i="8" role="tab" aria-selected="false">Broadcasts</button></div>
+      <figure class="admin-shot" id="admin">
+        <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>cms.chargeui.in/<b id="g-path">dashboard</b></span></div>
+        <div class="g-stage"><img src="assets/screens/cms/dashboard.jpg" alt="ChargeUI CMS Dashboard screen" width="2000" height="1250" class=on data-cap="Stations, charge points, live status, energy, revenue and alarms on one screen."><img src="assets/screens/cms/analytics.jpg" alt="ChargeUI CMS Analytics screen" width="2000" height="1250" loading=lazy data-cap="Revenue, energy, utilisation and performance by station and charge point."><img src="assets/screens/cms/alarms.jpg" alt="ChargeUI CMS Alarms screen" width="2000" height="1250" loading=lazy data-cap="Every OCPP fault and warning, with acknowledge, resolve and raise-ticket actions."><img src="assets/screens/cms/transactions.jpg" alt="ChargeUI CMS Transactions screen" width="2000" height="1250" loading=lazy data-cap="Every session and payment, filterable and exportable to CSV."><img src="assets/screens/cms/stations.jpg" alt="ChargeUI CMS Stations screen" width="2000" height="1250" loading=lazy data-cap="Your charging assets on a list and a map, with status at a glance."><img src="assets/screens/cms/sessions.jpg" alt="ChargeUI CMS Live sessions screen" width="2000" height="1250" loading=lazy data-cap="Sessions in progress, live power and energy, and remote stop."><img src="assets/screens/cms/tickets.jpg" alt="ChargeUI CMS Service tickets screen" width="2000" height="1250" loading=lazy data-cap="Issues tracked from report to resolution, with SLAs and owners."><img src="assets/screens/cms/whitelabel.jpg" alt="ChargeUI CMS White label screen" width="2000" height="1250" loading=lazy data-cap="Every operator and franchise with its own branding, plan and stations."><img src="assets/screens/cms/broadcasts.jpg" alt="ChargeUI CMS Broadcasts screen" width="2000" height="1250" loading=lazy data-cap="Push and email announcements to the drivers you choose."></div>
+        <div class="g-prog" aria-hidden="true"><i id="g-bar"></i></div>
+      </figure>
+      <p class="g-cap" id="g-cap" aria-live="polite">Stations, charge points, live status, energy, revenue and alarms on one screen.</p>
+    </div>
 
     <div class="modules">
       <div><h4>Central dashboard</h4><p>Stations, charge points, availability, sessions, energy and revenue at a glance.</p></div>
@@ -605,6 +656,16 @@
         </li>
       </ol>
     </div>
+    <div class="app-strip">
+      <h3>Real screens from the ChargeUI app</h3>
+      <ul class="phones">
+        <li><div class="ph"><img src="assets/screens/home-light.svg" alt="Home screen with search, quick actions and nearby stations" loading="lazy" width="390" height="959"></div><b>Home</b><span>Search, quick actions, nearby stations</span></li>
+        <li><div class="ph"><img src="assets/screens/app/map.jpg" alt="Map screen with AC, DC and availability filters" loading="lazy" width="600" height="1299"></div><b>Map</b><span>Filters for AC, DC and availability</span></li>
+        <li><div class="ph"><img src="assets/screens/app/scan.jpg" alt="QR scanner to open a charger" loading="lazy" width="600" height="1299"></div><b>Scan to charge</b><span>QR scan or charger ID</span></li>
+        <li><div class="ph"><img src="assets/screens/profile.svg" alt="Profile screen with wallet, vehicles and settings" loading="lazy" width="390" height="844"></div><b>Profile</b><span>Wallet, vehicles, support</span></li>
+        <li><div class="ph"><img src="assets/screens/home-dark.svg" alt="Home screen in dark mode" loading="lazy" width="390" height="995"></div><b>Dark mode</b><span>Easy on the eyes at night</span></li>
+      </ul>
+    </div>
   </div>
 </section>
 
@@ -776,18 +837,19 @@
 <section class="inds" id="industries">
   <div class="wrap">
     <h2>Built for every kind of charging business</h2>
-    <ul class="ind-list">
-      <li><b>Charge point operators</b>Run networks, stations and transactions centrally.</li>
-      <li><b>Franchise owners</b>Your brand, your app, daily settlements.</li>
-      <li><b>Apartments and gated communities</b>More chargers within your sanctioned load.</li>
-      <li><b>Offices and IT parks</b>Charging for employees and visitors.</li>
-      <li><b>Hotels and hospitality</b>Charging as a guest convenience.</li>
-      <li><b>Malls and retail</b>Infrastructure that brings shoppers in.</li>
-      <li><b>Highways and fuel stations</b>Fast charging for intercity travel.</li>
-      <li><b>Fleets and logistics</b>Monitor fleet charging and costs.</li>
-      <li><b>Automotive dealerships</b>Charging for deliveries and customers.</li>
-      <li><b>Government and institutions</b>Public charging infrastructure projects.</li>
+    <ul class="ind-cards">
+      <li><img src="assets/photos/station-2.jpg" alt="" loading="lazy"><div><b>Charge point operators</b><span>Run networks, stations and transactions centrally.</span></div></li>
+      <li><img src="assets/photos/station-6.jpg" alt="" loading="lazy"><div><b>Franchise owners</b><span>Your brand, your app, daily settlements.</span></div></li>
+      <li><img src="assets/photos/station-4.jpg" alt="" loading="lazy"><div><b>Apartments and gated communities</b><span>More chargers within your sanctioned load.</span></div></li>
+      <li><img src="assets/photos/station-1.jpg" alt="" loading="lazy"><div><b>Offices and IT parks</b><span>Charging for employees and visitors.</span></div></li>
+      <li><img src="assets/photos/cleaner.jpg" alt="" loading="lazy"><div><b>Hotels and hospitality</b><span>Charging as a guest convenience.</span></div></li>
+      <li><img src="assets/photos/launch.jpg" alt="" loading="lazy"><div><b>Malls and retail</b><span>Infrastructure that brings shoppers in.</span></div></li>
+      <li><img src="assets/photos/station-8.jpg" alt="" loading="lazy"><div><b>Highways and fuel stations</b><span>Fast charging for intercity travel.</span></div></li>
+      <li><img src="assets/photos/station-5.jpg" alt="" loading="lazy"><div><b>Fleets and logistics</b><span>Monitor fleet charging and costs.</span></div></li>
+      <li><img src="assets/photos/station-7.jpg" alt="" loading="lazy"><div><b>Automotive dealerships</b><span>Charging for deliveries and customers.</span></div></li>
+      <li><img src="assets/photos/maintenance.jpg" alt="" loading="lazy"><div><b>Government and institutions</b><span>Public charging infrastructure projects.</span></div></li>
     </ul>
+    <p class="fine">Sample photos.</p>
   </div>
 </section>
 
@@ -923,7 +985,7 @@
         <img src="assets/logo.png" alt="ChargeUI" class="footer-logo" width="787" height="240">
         <p>Powering the future of electric mobility. Complete EV infrastructure and intelligent charging management.</p>
       </div>
-      <div><h5>Solutions</h5><a href="#platform">CMS software</a><a href="#platform">White-label platform</a><a href="#franchise">Franchise enablement</a><a href="#app">EV driver app</a><a href="#infra">Charger installation</a><a href="#infra">Solar and BESS</a></div>
+      <div><h5>Solutions</h5><a href="#platform">CMS software</a><a href="#platform">White-label platform</a><a href="#franchise">Franchise enablement</a><a href="#app">User app</a><a href="#infra">Charger installation</a><a href="#infra">Solar and BESS</a></div>
       <div><h5>Company</h5><a href="#what">Solutions</a><a href="#usp">The ChargeUI advantage</a><a href="#why">Why ChargeUI</a><a href="#industries">Industries</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></div>
       <div><h5>Legal</h5><a href="#">Privacy policy</a><a href="#">Terms and conditions</a><a href="#">Refund and cancellation</a><a href="#">Data protection</a></div>
     </div>
@@ -931,6 +993,6 @@
   </div>
 </footer>
 
-<script src="script.js?v=5"></script>
+<script src="script.js?v=7"></script>
 </body>
 </html>
