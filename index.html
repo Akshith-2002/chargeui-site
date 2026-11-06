@@ -3,25 +3,23 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>ChargeUI · EV charging across India</title>
-  <meta name="description" content="Find EV chargers for your car or two-wheeler, pay by rupees or kWh from one wallet, and get unused money back automatically. Android, iOS and web.">
-  <meta name="theme-color" content="#002B5E">
+  <title>ChargeUI | EV Charging Software, CPMS &amp; Infrastructure Solutions</title>
+  <meta name="description" content="ChargeUI offers intelligent EV charging management software, white-label CPMS, EV driver apps, franchise solutions and complete EV charging infrastructure services in India.">
+  <meta name="theme-color" content="#0b1b2e">
   <link rel="icon" href="assets/favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=3">
 </head>
 <body>
-
-<!-- Shared EV illustration: compact electric SUV, side view, front facing left. Used by the Autocharge tile and step 4. -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
     <linearGradient id="ev-paint" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#e9eff6"/><stop offset=".7" stop-color="#c9d5e3"/><stop offset="1" stop-color="#9fb0c5"/>
     </linearGradient>
     <linearGradient id="ev-glass" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0" stop-color="#1b4d86"/><stop offset=".55" stop-color="#0a2547"/><stop offset="1" stop-color="#05162d"/>
+      <stop offset="0" stop-color="#475569"/><stop offset=".55" stop-color="#1e293b"/><stop offset="1" stop-color="#0f172a"/>
     </linearGradient>
     <linearGradient id="ev-glare" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
@@ -39,7 +37,7 @@
       <g stroke="#5d6b7d" stroke-width="3.2" stroke-linecap="round">
         <path d="M0 -3 L0 -13"/><path d="M2.9 -0.9 L12.4 -4"/><path d="M1.8 2.4 L7.6 10.5"/><path d="M-1.8 2.4 L-7.6 10.5"/><path d="M-2.9 -0.9 L-12.4 -4"/>
       </g>
-      <circle r="3.6" fill="#2b3644"/><circle r="1.4" fill="#0065DA"/>
+      <circle r="3.6" fill="#2b3644"/><circle r="1.4" fill="#15803d"/>
     </g>
     <symbol id="ev-car" viewBox="0 0 360 160">
       <ellipse cx="182" cy="146" rx="168" ry="9" fill="#000" opacity=".28"/>
@@ -50,8 +48,8 @@
       <!-- greenhouse -->
       <path fill="url(#ev-glass)" d="M128 84 C142 72 156 63 172 58 C192 53 246 52 268 56 C284 59 298 68 309 79 L300 82 L136 86 Z"/>
       <path fill="url(#ev-glare)" d="M150 80 L176 59 L196 57 L170 82 Z"/>
-      <path d="M215 55 L213 84" stroke="#0a1a30" stroke-width="5"/>
-      <path d="M128 84 C142 72 156 63 172 58 C192 53 246 52 268 56 C284 59 298 68 309 79" fill="none" stroke="#0b1a2e" stroke-width="2.5"/>
+      <path d="M215 55 L213 84" stroke="#0f172a" stroke-width="5"/>
+      <path d="M128 84 C142 72 156 63 172 58 C192 53 246 52 268 56 C284 59 298 68 309 79" fill="none" stroke="#0f172a" stroke-width="2.5"/>
       <!-- roof rail -->
       <path d="M176 51 C200 46 246 45 270 48" fill="none" stroke="#2b3644" stroke-width="3" stroke-linecap="round"/>
       <!-- shoulder highlight and door shut lines -->
@@ -61,12 +59,12 @@
       <!-- mirror -->
       <path d="M138 80 C134 78 128 79 126 83 L134 86 Z" fill="#1d2735"/>
       <!-- LED headlight strip and tail light -->
-      <path d="M20 103 C30 99 44 97 60 96" fill="none" stroke="#01C7E7" stroke-width="3" stroke-linecap="round"/>
-      <path d="M20 103 C30 99 44 97 60 96" fill="none" stroke="#9ff0ff" stroke-width="1" stroke-linecap="round"/>
+      <path d="M20 103 C30 99 44 97 60 96" fill="none" stroke="#22c55e" stroke-width="3" stroke-linecap="round"/>
+      <path d="M20 103 C30 99 44 97 60 96" fill="none" stroke="#86efac" stroke-width="1" stroke-linecap="round"/>
       <path d="M332 86 C338 90 343 95 345 100" fill="none" stroke="#ef4444" stroke-width="3.5" stroke-linecap="round"/>
       <!-- charge port (rear quarter) -->
-      <rect x="312" y="92" width="12" height="9" rx="2.5" fill="#0b1a2e"/>
-      <circle class="ev-port" cx="318" cy="96.5" r="2.4" fill="#01C7E7"/>
+      <rect x="312" y="92" width="12" height="9" rx="2.5" fill="#0f172a"/>
+      <circle class="ev-port" cx="318" cy="96.5" r="2.4" fill="#22c55e"/>
       <!-- wheels -->
       <use href="#ev-wheel" x="88" y="130"/>
       <use href="#ev-wheel" x="282" y="130"/>
@@ -79,17 +77,18 @@
   <div class="wrap nav-in">
     <a href="#top" class="nav-logo" aria-label="ChargeUI home"><img src="assets/logo.png" alt="ChargeUI" width="787" height="240"></a>
     <nav aria-label="Main">
-      <a href="#how">How it works</a>
-      <a href="#map">Find chargers</a>
-      <a href="#wallet">Wallet</a>
-      <a href="#operators">For operators</a>
+      <a href="#what">What we do</a>
+      <a href="#usp">Why ChargeUI</a>
+      <a href="#platform">Platform</a>
+      <a href="#app">Driver app</a>
+      <a href="#infra">Infrastructure</a>
       <a href="#faq">FAQ</a>
     </nav>
     <div class="nav-batt" aria-hidden="true" title="How far you've scrolled">
       <span class="batt"><span class="batt-fill" id="batt-fill"></span></span>
       <span class="batt-pct" id="batt-pct">0%</span>
     </div>
-    <a href="#get" class="btn btn-sm btn-brand">Get the app</a>
+    <a href="#contact" class="btn btn-sm btn-brand">Book a demo</a>
   </div>
 </header>
 
@@ -100,9 +99,9 @@
   <svg class="hero-lines" viewBox="0 0 1440 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
     <defs>
       <linearGradient id="lg" x1="0" x2="1">
-        <stop offset="0" stop-color="#0065DA" stop-opacity="0"/>
-        <stop offset=".6" stop-color="#009EF3"/>
-        <stop offset="1" stop-color="#01C7E7"/>
+        <stop offset="0" stop-color="#15803d" stop-opacity="0"/>
+        <stop offset=".6" stop-color="#16a34a"/>
+        <stop offset="1" stop-color="#22c55e"/>
       </linearGradient>
     </defs>
     <g fill="none" stroke-width="1.5">
@@ -117,75 +116,318 @@
 
   <div class="wrap hero-in">
     <div class="hero-copy">
-      <p class="hero-kicker"><span class="pulse"></span>Live in Hyderabad, for cars and two-wheelers</p>
-      <h1>Charge anywhere, drive further.</h1>
-      <p class="lead">Find a working charger, pay from one wallet by rupees or by kWh, and get every unused rupee back the moment you unplug.</p>
-      <div class="hero-cta" id="get">
-        <a href="#" class="store">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3.6 2.3 13.5 12l-9.9 9.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1Zm11 8.6 2.6-2.6 3.3 1.9c.9.5.9 1.8 0 2.3l-3.3 1.9-2.6-2.6L13.6 12l1-1.1ZM5 1.6l10.9 6.3-2.4 2.4L5 1.6Zm8.5 12.1 2.4 2.4L5 22.4l8.5-8.7Z"/></svg>
-          <span><small>Get it on</small>Google Play</span>
-        </a>
-        <a href="#" class="store">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.7-1-2.7-4.1ZM13.9 4.9c.7-.9 1.2-2 1-3.2-1 0-2.2.7-3 1.6-.6.7-1.2 1.9-1 3.1 1.1.1 2.3-.6 3-1.5Z"/></svg>
-          <span><small>Download on the</small>App Store</span>
-        </a>
+      <p class="hero-kicker"><span class="pulse"></span>The operating system for EV charging businesses</p>
+      <h1>EV charging business, made simple.</h1>
+      <p class="lead">Less manual work, more control. One platform to balance power across your chargers, track every fault to resolution, settle your earnings daily and give drivers an app they enjoy using.</p>
+      <div class="hero-cta">
+        <a href="#contact" class="btn btn-lg btn-brand">Book a live demo</a>
+        <a href="#usp" class="btn btn-lg btn-ghost">See what makes us different</a>
       </div>
-      <a href="#" class="text-link">Or use it in your browser, no download</a>
+      <ul class="hero-points">
+        <li>CMS software</li><li>White-label apps</li><li>Franchise enablement</li><li>Charger installation</li>
+      </ul>
     </div>
 
-    <!-- Live session phone: the signature moment -->
     <div class="hero-visual">
       <div class="glow" aria-hidden="true"></div>
-      <div class="phone phone-hero">
-        <div class="ui ui-live" id="hero-live" aria-label="Example charging session at Raidurg Metro">
-          <div class="ui-bar"><span class="ui-back">‹</span><b id="h-title">Charging</b><span></span></div>
-          <p class="ui-sub">Raidurg Metro · GR-2204-A · CCS2 120 kW</p>
-          <div class="ring">
-            <svg viewBox="0 0 200 200" aria-hidden="true">
-              <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0065DA"/><stop offset="1" stop-color="#01C7E7"/></linearGradient></defs>
-              <circle cx="100" cy="100" r="84" class="ring-track"/>
-              <circle cx="100" cy="100" r="84" class="ring-val" id="h-ring"/>
-            </svg>
-            <div class="ring-mid">
-              <span class="ring-num" id="h-kwh">0.0</span>
-              <span class="ring-of">of 12.5 kWh</span>
-            </div>
-          </div>
-          <div class="ui-stats">
-            <div><b id="h-kw">0</b><span>kW</span></div>
-            <div><b id="h-min">0</b><span>min</span></div>
-            <div><b id="h-bat">38</b><span>% battery</span></div>
-          </div>
-          <div class="ui-hold" id="h-hold">₹500.00 held from wallet</div>
-          <button class="ui-stop" tabindex="-1" id="h-stop">Stop charging</button>
-        </div>
+      <figure class="hero-shot">
+        <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>cms.chargeui.in/dashboard</span></div>
+        <img src="assets/screens/admin-dashboard.jpg" alt="ChargeUI CMS dashboard showing stations, charge points, energy, revenue, charger status and recent alarms" width="2400" height="1500">
+      </figure>
+      <div class="htoast" id="htoast" aria-live="off">
+        <span class="t-ico" id="ht-ico">⚡</span>
+        <span><b id="ht-title">Load rebalanced</b><span id="ht-sub">Green Meadows · 4 cars sharing 22 kW</span></span>
       </div>
-      <div class="toast toast-a" id="toast-a"><span class="t-ico t-blue">⚡</span><span><b>Charging started</b>Raidurg Metro, connector A</span></div>
-      <div class="toast toast-b" id="toast-b"><span class="t-ico t-green">₹</span><span><b>₹146.00 refunded to wallet</b>12.5 kWh delivered · invoice ready</span></div>
     </div>
   </div>
 
-  <div class="ticker" aria-label="Supported standards">
+  <div class="ticker" aria-label="Supported standards and integrations">
     <div class="ticker-track">
-      <span>Type 2</span><span>CCS2</span><span>CHAdeMO</span><span>LEV for two-wheelers</span><span>UPI · cards · net-banking</span><span>GST invoices</span><span>OCPP 1.6J &amp; 2.0.1</span><span>OCPI 2.2.1 roaming</span><span>ISO 15118 Plug &amp; Charge</span>
-      <span aria-hidden="true">Type 2</span><span aria-hidden="true">CCS2</span><span aria-hidden="true">CHAdeMO</span><span aria-hidden="true">LEV for two-wheelers</span><span aria-hidden="true">UPI · cards · net-banking</span><span aria-hidden="true">GST invoices</span><span aria-hidden="true">OCPP 1.6J &amp; 2.0.1</span><span aria-hidden="true">OCPI 2.2.1 roaming</span><span aria-hidden="true">ISO 15118 Plug &amp; Charge</span>
+      <span>OCPP 1.6J &amp; 2.0.1</span><span>OCPI 2.2.1 roaming</span><span>AC &amp; DC chargers</span><span>Type 2 · CCS2 · CHAdeMO · LEV</span><span>RFID access</span><span>UPI · cards · net-banking</span><span>GST invoices</span><span>WhatsApp alerts</span><span>API integration</span>
+      <span aria-hidden="true">OCPP 1.6J &amp; 2.0.1</span><span aria-hidden="true">OCPI 2.2.1 roaming</span><span aria-hidden="true">AC &amp; DC chargers</span><span aria-hidden="true">Type 2 · CCS2 · CHAdeMO · LEV</span><span aria-hidden="true">RFID access</span><span aria-hidden="true">UPI · cards · net-banking</span><span aria-hidden="true">GST invoices</span><span aria-hidden="true">WhatsApp alerts</span><span aria-hidden="true">API integration</span>
     </div>
   </div>
 </section>
 
-<!-- ================= HOW IT WORKS (scroll story) ================= -->
-<section class="story" id="how">
+<!-- ================= WHAT WE DO ================= -->
+<section class="what" id="what">
   <div class="wrap">
     <div class="section-head">
-      <h2>From parking to paid in five steps</h2>
-      <p>No cash, no cards at the machine, and you know the price before you plug in.</p>
+      <h2>Build, manage and scale your charging business</h2>
+      <p>Software, electrical infrastructure and business support from one partner, so you go from one station to a full network without stitching vendors together.</p>
+    </div>
+    <div class="pillars">
+      <article class="pillar pillar-lead">
+        <span class="p-tag">Software</span>
+        <h3>Charging management software (CMS)</h3>
+        <p>Monitor every charger, manage users, track transactions, analyse revenue and control operations remotely, from one dashboard.</p>
+        <a href="#platform" class="p-link">Explore the platform</a>
+      </article>
+      <article class="pillar">
+        <span class="p-tag">Your brand</span>
+        <h3>White-label platform</h3>
+        <p>Launch your own charging brand with a customised CMS, a branded driver app and partner management.</p>
+      </article>
+      <article class="pillar">
+        <span class="p-tag">Business</span>
+        <h3>Franchise enablement</h3>
+        <p>Give franchise partners their own branded ecosystem, central monitoring and daily settlements.</p>
+      </article>
+      <article class="pillar">
+        <span class="p-tag">Drivers</span>
+        <h3>EV driver app</h3>
+        <p>Station discovery, live availability, QR scan to charge, live sessions and wallet payments.</p>
+      </article>
+      <article class="pillar">
+        <span class="p-tag">On site</span>
+        <h3>Complete EV infrastructure</h3>
+        <p>Site survey, approvals, HT/LT electrical works, charger installation and commissioning.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= USPs ================= -->
+<section class="usp" id="usp">
+  <div class="wrap">
+    <div class="usp-head">
+      <h2>We simplify what others make complicated</h2>
+      <p>Not just charger monitoring. ChargeUI automates the hardest electrical, operational and financial work of running a charging business. Try each one below.</p>
+      <div class="usp-tabs" role="tablist" aria-label="ChargeUI advantages">
+        <a href="#usp-load" class="utab">Load balancing</a>
+        <a href="#usp-issues" class="utab">Issue tracking</a>
+        <a href="#usp-settle" class="utab">Daily settlements</a>
+      </div>
+    </div>
+
+    <!-- USP 1: Dynamic AC load management -->
+    <article class="usp-block" id="usp-load">
+      <div class="usp-copy">
+        <span class="flag">Flagship</span>
+        <h3>Dynamic load management for AC chargers</h3>
+        <p class="usp-sub">More chargers on the same electrical connection, without tripping the main breaker.</p>
+        <p>Gated communities usually have a fixed sanctioned load. Six 7.4 kW chargers need 44 kW if every one runs flat out, which most apartment connections can't supply. ChargeUI shares the available power across the cars that are actually plugged in, and rebalances the moment one arrives or leaves.</p>
+        <ul class="ticks">
+          <li>Configurable maximum site load</li>
+          <li>Power shared in real time across connected chargers</li>
+          <li>Round-robin allocation and dual-gun charger support</li>
+          <li>More charging points without upgrading the transformer</li>
+        </ul>
+        <p class="fine">Depends on charger compatibility, site wiring, metering and integration.</p>
+      </div>
+
+      <div class="demo lb" id="lb" aria-label="Interactive load management demo">
+        <div class="demo-top">
+          <div>
+            <b>Green Meadows Apartments</b>
+            <span>Basement parking · 6 AC chargers, 7.4 kW each</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="lb-toggle" checked>
+            <span class="sw"></span>
+            <span class="sw-label">Load management</span>
+          </label>
+        </div>
+
+        <div class="meter" id="lb-meter">
+          <div class="meter-row">
+            <span>Site load</span>
+            <span><b id="lb-total">0.0</b> / <span id="lb-limit-v">22</span> kW sanctioned</span>
+          </div>
+          <div class="mbar"><div class="mfill" id="lb-fill"></div><div class="mlimit" id="lb-limit-mark"></div></div>
+          <p class="lb-msg" id="lb-msg" aria-live="polite">Tap a bay to plug a car in.</p>
+        </div>
+
+        <div class="bays" id="lb-bays"></div>
+        <div class="lb-limit">
+          <label for="lb-limit">Sanctioned EV load</label>
+          <input type="range" id="lb-limit" min="11" max="44" step="1" value="22">
+          <output id="lb-limit-out">22 kW</output>
+        </div>
+      </div>
+    </article>
+
+    <!-- USP 2: Issue tracking -->
+    <article class="usp-block usp-flip" id="usp-issues">
+      <div class="usp-copy">
+        <span class="flag">Automated</span>
+        <h3>Issue tracking, from fault to fixed</h3>
+        <p class="usp-sub">No scattered WhatsApp messages, forgotten complaints or manual follow-ups.</p>
+        <p>When a charger reports a fault, ChargeUI opens a ticket, sets its priority and assigns it to the right technician. The owner is kept informed until it's closed. A charge point that stays unavailable for 10 minutes alerts the station owner, and repeats every 30 minutes until it's fixed.</p>
+        <ul class="ticks">
+          <li>Tickets created automatically from charger alarms</li>
+          <li>Categorised, prioritised and assigned</li>
+          <li>In-app, email and WhatsApp updates</li>
+          <li>Full service history for every charger</li>
+        </ul>
+      </div>
+
+      <div class="demo it" id="it" aria-label="Animated issue resolution workflow">
+        <div class="demo-top">
+          <div><b>Ticket #1048</b><span>GR-0419-A · Gachibowli Stadium</span></div>
+          <span class="it-badge" id="it-badge">Open</span>
+        </div>
+        <ol class="it-stages" id="it-stages">
+          <li>Detected</li><li>Ticket</li><li>Assigned</li><li>On site</li><li>Resolved</li>
+        </ol>
+        <div class="it-track"><div class="it-progress" id="it-progress"></div></div>
+        <ul class="it-log" id="it-log">
+          <li><time>10:02</time><span><b>Fault reported by charger</b>GroundFailure over OCPP. Connector A taken offline.</span></li>
+          <li><time>10:02</time><span><b>Ticket opened automatically</b>Priority high · category Electrical</span></li>
+          <li><time>10:03</time><span><b>Assigned to Ravi K., field technician</b>Station owner notified on WhatsApp</span></li>
+          <li><time>10:31</time><span><b>Technician on site</b>Soft reset failed. RCD replaced.</span></li>
+          <li><time>10:46</time><span><b>Charger back online, ticket closed</b>Resolved in 44 minutes · added to service history</span></li>
+        </ul>
+        <button class="replay" id="it-replay" type="button">Replay</button>
+      </div>
+    </article>
+
+    <!-- USP 3: Daily settlement -->
+    <article class="usp-block" id="usp-settle">
+      <div class="usp-copy">
+        <span class="flag">Transparent</span>
+        <h3>Day-to-day settlements for franchise owners</h3>
+        <p class="usp-sub">Know what you earned yesterday, and exactly what was deducted.</p>
+        <p>Every day's charging is settled to the franchise owner with a clear statement: gross revenue, payment processing fee, platform fee and the net amount. No spreadsheets, no month-end surprises.</p>
+        <ul class="ticks">
+          <li>Day-wise transaction and energy reports</li>
+          <li>Processing and platform fee calculated automatically</li>
+          <li>Owner-wise statements and settlement history</li>
+          <li>Central reconciliation across every franchise</li>
+        </ul>
+        <p class="fine">Illustrative figures. Actual settlement depends on your commercial model, gateway charges, taxes and settlement setup.</p>
+      </div>
+
+      <div class="demo st" id="st" aria-label="Example daily settlement statement">
+        <div class="demo-top">
+          <div><b>Daily settlement</b><span>Franchise: Green Meadows</span></div>
+          <span class="st-status" id="st-status">Paid out</span>
+        </div>
+        <div class="st-days" id="st-days" role="tablist" aria-label="Choose a day"></div>
+        <div class="st-meta"><span><b id="st-sessions">0</b> sessions</span><span><b id="st-kwh">0</b> kWh</span></div>
+        <dl class="st-bill">
+          <div><dt>Gross charging revenue</dt><dd id="st-gross">₹0</dd></div>
+          <div><dt>Payment processing fee (2%)</dt><dd id="st-proc">− ₹0</dd></div>
+          <div><dt>Platform fee (3%)</dt><dd id="st-plat">− ₹0</dd></div>
+          <div class="st-net"><dt>Net settlement</dt><dd id="st-net">₹0</dd></div>
+        </dl>
+        <div class="st-foot"><span id="st-when">Credited to your bank account</span><span class="st-dl">Download statement</span></div>
+      </div>
+    </article>
+
+    <!-- Traditional vs ChargeUI -->
+    <div class="vs">
+      <h3>Running a charging franchise, before and after ChargeUI</h3>
+      <div class="vs-table" role="table" aria-label="Traditional operations compared with ChargeUI">
+        <div class="vs-row vs-headrow" role="row"><span role="columnheader">The traditional way</span><span role="columnheader">With ChargeUI</span></div>
+        <div class="vs-row" role="row"><span role="cell">Visiting stations to check if chargers work</span><span role="cell">Live status of every charger, remotely</span></div>
+        <div class="vs-row" role="row"><span role="cell">Calling technicians to find out what broke</span><span role="cell">Automatic fault alerts and tickets</span></div>
+        <div class="vs-row" role="row"><span role="cell">Treating every charger as a separate full load</span><span role="cell">Dynamic load sharing within your sanctioned limit</span></div>
+        <div class="vs-row" role="row"><span role="cell">Calculating earnings and fees in spreadsheets</span><span role="cell">Daily settlement statements, fees worked out</span></div>
+        <div class="vs-row" role="row"><span role="cell">Managing RFID cards and customers by hand</span><span role="cell">Central user and RFID administration</span></div>
+        <div class="vs-row" role="row"><span role="cell">A separate setup for every location</span><span role="cell">One login for every station and city</span></div>
+      </div>
+      <p class="fine">Actual automation depends on charger compatibility, integrations and configured workflows.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PLATFORM ================= -->
+<section class="platform" id="platform">
+  <div class="wrap">
+    <div class="section-head section-head-dark">
+      <h2>Your whole network on one screen</h2>
+      <p>Whether you run 5 chargers or 500, across one site or many cities. This is the ChargeUI CMS, shown with demo data.</p>
+    </div>
+
+    <figure class="admin-shot" id="admin">
+      <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>cms.chargeui.in/dashboard</span></div>
+      <img src="assets/screens/admin-dashboard.jpg" alt="ChargeUI CMS dashboard: station and charge point counts, energy, revenue and session charts, charger status, station overview, live map and recent alarms" width="2400" height="1500" loading="lazy">
+    </figure>
+
+    <div class="modules">
+      <div><h4>Central dashboard</h4><p>Stations, charge points, availability, sessions, energy and revenue at a glance.</p></div>
+      <div><h4>Live charger monitoring</h4><p>Connectivity, status and remote start, stop, reset and unlock.</p></div>
+      <div><h4>Smart load management</h4><p>Dynamic, round-robin and dual-gun power allocation within site limits.</p></div>
+      <div><h4>Transactions and billing</h4><p>Every session, unit and payment, by user and by station.</p></div>
+      <div><h4>Users and RFID</h4><p>Registration, access control, groups and RFID card assignment.</p></div>
+      <div><h4>Asset management</h4><p>Charger inventory, configuration and maintenance records by location.</p></div>
+      <div><h4>Alarms and notifications</h4><p>Offline, fault and status alerts in-app, by email and on WhatsApp.</p></div>
+      <div><h4>Service tickets</h4><p>Issue tracking from report to resolution, with full history.</p></div>
+      <div><h4>Business analytics</h4><p>Energy, revenue, utilisation and station performance, with CSV export.</p></div>
+      <div><h4>Multi-location</h4><p>Every city and site under one login, with franchise-level access.</p></div>
+      <div><h4>Broadcasts</h4><p>Push announcements to the drivers you choose.</p></div>
+      <div><h4>Open standards</h4><p>OCPP 1.6J and 2.0.1 chargers, OCPI 2.2.1 roaming and APIs.</p></div>
+    </div>
+
+    <!-- White-label switcher -->
+    <div class="wl" id="wl">
+      <div class="wl-copy">
+        <h3>Your brand on every screen</h3>
+        <p>Launch under your own name, logo and colours, on the CMS your team uses and the app your drivers download. Pick an example brand to see it change.</p>
+        <div class="wl-pick" role="radiogroup" aria-label="Example brand">
+          <button type="button" class="wl-b on" data-name="ChargeUI" data-c1="#15803d" data-c2="#22c55e" role="radio" aria-checked="true">ChargeUI</button>
+          <button type="button" class="wl-b" data-name="VoltWay" data-c1="#0f766e" data-c2="#2dd4bf" role="radio" aria-checked="false">VoltWay</button>
+          <button type="button" class="wl-b" data-name="GridGo" data-c1="#6d28d9" data-c2="#c084fc" role="radio" aria-checked="false">GridGo</button>
+          <button type="button" class="wl-b" data-name="SunCharge" data-c1="#c2410c" data-c2="#fbbf24" role="radio" aria-checked="false">SunCharge</button>
+        </div>
+        <p class="fine">VoltWay, GridGo and SunCharge are example brands.</p>
+      </div>
+      <div class="wl-stage" aria-hidden="true">
+        <div class="wl-cms">
+          <div class="wl-side"><span class="wl-logo"><i></i><b class="wl-name">ChargeUI</b></span><span class="on">Dashboard</span><span>Stations</span><span>Sessions</span><span>Settlements</span><span>Tickets</span></div>
+          <div class="wl-main">
+            <b>Good morning</b>
+            <div class="wl-kpis"><div><span>Today</span><b>₹12,650</b></div><div><span>Energy</span><b>648 kWh</b></div><div><span>Online</span><b>24/26</b></div></div>
+            <div class="wl-chart"><i style="height:40%"></i><i style="height:62%"></i><i style="height:48%"></i><i style="height:75%"></i><i style="height:66%"></i><i style="height:90%"></i><i style="height:82%"></i></div>
+          </div>
+        </div>
+        <div class="wl-phone">
+          <div class="wl-app-top"><i></i><b class="wl-name">ChargeUI</b></div>
+          <div class="wl-search">Search stations</div>
+          <div class="wl-banner"><b>Charge with <span class="wl-name">ChargeUI</span></b><span>12 stations near you</span></div>
+          <div class="wl-st"><span class="wl-dot"></span><span><b>Green Meadows</b>2 of 6 free · ₹14/kWh</span></div>
+          <div class="wl-st"><span class="wl-dot"></span><span><b>Tower B Parking</b>4 of 4 free · ₹14/kWh</span></div>
+          <div class="wl-btn">Scan to charge</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FRANCHISE JOURNEY ================= -->
+<section class="journey" id="franchise">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>You build the business. We simplify everything else.</h2>
+      <p>Don't just start an EV charging business. Start a smarter one. Here's how a franchise goes live on ChargeUI.</p>
+    </div>
+    <ol class="steps">
+      <li><span class="step-n">1</span><h3>Set up your station</h3><p>We survey, install, configure and connect the chargers.</p></li>
+      <li><span class="step-n">2</span><h3>Switch on your brand</h3><p>Your white-label CMS and driver app go live.</p></li>
+      <li><span class="step-n">3</span><h3>Welcome drivers</h3><p>They find your station, scan the QR and start charging.</p></li>
+      <li><span class="step-n">4</span><h3>Monitor automatically</h3><p>Status, sessions, energy and payments update on their own.</p></li>
+      <li><span class="step-n">5</span><h3>Get alerted, not surprised</h3><p>Faults and offline chargers raise alerts and tickets.</p></li>
+      <li><span class="step-n">6</span><h3>Get settled daily</h3><p>Review revenue and receive your daily settlement.</p></li>
+    </ol>
+    <div class="journey-cta">
+      <a href="#contact" class="btn btn-lg btn-brand">Become a ChargeUI partner</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DRIVER APP ================= -->
+<section class="story" id="app">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>An app your drivers will actually like</h2>
+      <p>A great network starts with a great charging experience. Five steps from parking to paid, with no cash and no cards at the machine.</p>
     </div>
     <div class="story-in">
       <div class="story-phone" aria-hidden="true">
         <div class="phone phone-story"><div class="screen-stack" id="story-stack"></div></div>
         <div class="story-dots" id="story-dots"></div>
       </div>
-
       <ol class="story-steps">
         <!-- 1 -->
         <li class="story-step is-active" data-step="1">
@@ -308,252 +550,289 @@
   </div>
 </section>
 
-<!-- ================= MAP ================= -->
-<section class="mapsec" id="map">
+<!-- ================= INFRASTRUCTURE ================= -->
+<section class="infra" id="infra">
   <div class="wrap">
     <div class="section-head">
-      <h2>See which chargers work before you drive there</h2>
-      <p>Every connector shows its live state. Every pin shows whose charger it is. Try the filters.</p>
+      <h2>From site survey to switch-on, under one roof</h2>
+      <p>Setting up a station takes planning, electrical engineering, approvals and careful execution. We handle all of it, then connect it to the CMS.</p>
     </div>
-
-    <div class="mapui">
-      <div class="map-filters" role="toolbar" aria-label="Filter stations">
-        <button class="fchip on" data-f="all">All</button>
-        <button class="fchip" data-f="ac">AC</button>
-        <button class="fchip" data-f="dc">DC</button>
-        <button class="fchip" data-f="avail">Available now</button>
-        <button class="fchip" data-f="fast">Fast, 50 kW+</button>
-        <button class="fchip" data-f="lev">Two-wheeler</button>
-        <span class="fcount" id="fcount" aria-live="polite">8 stations</span>
-      </div>
-
-      <div class="map-grid">
-        <div class="map" id="mapbox">
-          <svg class="map-art" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
-            <rect width="1000" height="620" class="m-land"/>
-            <path class="m-park" d="M300 30 C 360 20, 420 60, 410 120 C 400 170, 330 180, 290 150 C 250 120, 250 50, 300 30 Z"/>
-            <path class="m-park" d="M120 400 C 180 380, 240 420, 230 470 C 220 520, 150 530, 110 500 C 80 470, 80 420, 120 400 Z"/>
-            <path class="m-water" d="M560 300 C 600 280, 660 300, 660 345 C 660 395, 610 410, 575 395 C 540 380, 525 320, 560 300 Z"/>
-            <path class="m-water" d="M930 430 C 970 420, 1000 440, 1000 470 L1000 620 L 880 620 C 860 570, 880 450, 930 430 Z"/>
-            <g class="m-road-major">
-              <path d="M0 250 C 200 240, 380 230, 520 260 S 800 330, 1000 360"/>
-              <path d="M420 0 C 430 140, 470 280, 520 400 S 600 560, 640 620"/>
-              <path d="M0 520 C 200 500, 380 460, 560 450 S 860 480, 1000 520"/>
-            </g>
-            <g class="m-road">
-              <path d="M150 0 C 160 120, 200 260, 180 400 S 140 560, 160 620"/>
-              <path d="M0 130 C 200 140, 400 120, 600 150 S 860 200, 1000 180"/>
-              <path d="M700 0 C 690 150, 740 300, 760 420 S 820 560, 860 620"/>
-              <path d="M300 620 C 340 520, 420 420, 600 380 S 900 280, 1000 260"/>
-              <path d="M240 260 C 280 330, 350 380, 470 400"/>
-              <path d="M820 0 C 860 120, 900 200, 1000 230"/>
-            </g>
-            <g class="m-label">
-              <text x="560" y="210">HITEC City</text>
-              <text x="250" y="160">Kondapur</text>
-              <text x="60" y="300">Gachibowli</text>
-              <text x="680" y="440">Jubilee Hills</text>
-              <text x="820" y="600">Banjara Hills</text>
-              <text x="40" y="600">Financial District</text>
-              <text x="300" y="400">Madhapur</text>
-            </g>
-          </svg>
-          <span class="you" style="left:43.5%;top:41.9%" aria-hidden="true"></span>
-          <div id="pins"></div>
+    <!-- Power flow: 11 kV line -> CTPT (+ meter box) -> HT VCB -> transformer -> LT kiosk -> chargers -->
+    <div class="flow" id="flow">
+      <div class="flow-head">
+        <h3>How power reaches your chargers</h3>
+        <div class="flow-steps" role="tablist" aria-label="Equipment">
+          <button type="button" data-s="0">HT line</button>
+          <button type="button" data-s="1">CTPT</button>
+          <button type="button" data-s="2">HT VCB</button>
+          <button type="button" data-s="3">Transformer</button>
+          <button type="button" data-s="4">LT kiosk</button>
+          <button type="button" data-s="5">Chargers</button>
         </div>
-
-        <aside class="stcard" id="stcard" aria-live="polite">
-          <!-- filled by script.js -->
-        </aside>
       </div>
-      <p class="note">Sample stations from the app's demo data. Operator names and logos are placeholders until partners are announced. Tariffs are per kWh, plus 18% GST.</p>
-    </div>
+      <div class="flow-scroll">
+        <svg class="flow-svg" viewBox="0 0 1200 400" role="img" aria-label="Diagram: the 11 kV overhead line drops down the pole to the CTPT metering unit, which has a small meter box beside it. Power continues to the HT vacuum circuit breaker, then the transformer, which steps it down to 415 V, then the LT kiosk, which feeds the EV chargers.">
+          <defs>
+            <linearGradient id="fl-sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#eef2f6"/><stop offset="1" stop-color="#f8fafc"/></linearGradient>
+            <linearGradient id="fl-metal" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d5dce5"/><stop offset=".5" stop-color="#eef2f7"/><stop offset="1" stop-color="#c3cedb"/></linearGradient>
+            <linearGradient id="fl-tx" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#3d5a6c"/><stop offset=".5" stop-color="#5b7889"/><stop offset="1" stop-color="#34505f"/></linearGradient>
+            <linearGradient id="fl-beige" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#d9d3bf"/><stop offset=".5" stop-color="#ebe6d6"/><stop offset="1" stop-color="#cfc8b2"/></linearGradient>
+          </defs>
 
-    <ul class="map-points">
-      <li><b>Notify me</b>Connector busy? We'll tell you when it's free.</li>
-      <li><b>Roaming partners</b>Stations on partner networks appear on the same map and bill to the same wallet.</li>
-      <li><b>Reviews with photos</b>Ratings, comments and up to three photos from drivers who charged there.</li>
-      <li><b>No account needed</b>Browse everything as a guest. We ask for your number only when you start charging.</li>
-    </ul>
-  </div>
-</section>
+          <rect width="1200" height="300" fill="url(#fl-sky)"/>
+          <rect y="300" width="1200" height="100" fill="#e3e8ef"/>
+          <rect x="60" y="321" width="1000" height="18" rx="9" fill="#dbe3ec"/>
 
-<!-- ================= WALLET ================= -->
-<section class="wallet" id="wallet">
-  <div class="wrap wallet-in">
-    <div class="wallet-copy">
-      <h2>One wallet for every charger on the network</h2>
-      <p>Top up once with UPI, card or net-banking and charge at any operator. Every rupee in and out is listed, and you can filter by month.</p>
-      <dl class="promises">
-        <div><dt>Unused money returns by itself</dt><dd>Stop early or fill up before your amount runs out, and the rest of the hold comes back straight away.</dd></div>
-        <div><dt>Charger didn't start? Full refund</dt><dd>If no energy was delivered, the session is marked failed and nothing is charged.</dd></div>
-        <div><dt>GST invoices for business</dt><dd>Add your GSTIN once. Every invoice carries it, with CGST and SGST shown separately.</dd></div>
-      </dl>
-    </div>
+          <!-- overhead 11 kV conductors -->
+          <g class="cable-ov">
+            <path d="M0 46 C 20 42, 38 38, 46 36"/><path d="M0 20 C 40 22, 60 24, 76 26"/><path d="M0 31 C 50 30, 90 33, 106 36"/>
+          </g>
+          <g class="flow-p fp-ht" data-s="0">
+            <path d="M0 46 C 20 42, 38 38, 46 36"/><path d="M0 20 C 40 22, 60 24, 76 26"/><path d="M0 31 C 50 30, 90 33, 106 36"/>
+          </g>
 
-    <div class="ledger" id="ledger" aria-label="Example wallet history">
-      <div class="ledger-head">
-        <span>Wallet balance</span>
-        <strong id="bal" data-to="1240.50">₹0.00</strong>
-        <div class="ltabs" aria-hidden="true"><span class="on">All</span><span>Top-ups</span><span>Charging</span><span>Refunds</span></div>
+          <!-- cables (base) -->
+          <g class="cable">
+            <path id="c1" d="M96 62 L96 330 L238 330 L238 300"/>
+            <path id="c2" d="M250 300 L250 330 L385 330 L385 300"/>
+            <path id="c3" d="M410 300 L410 330 L568 330 L568 296"/>
+            <path class="lt" id="c4" d="M632 296 L632 330 L782 330 L782 300"/>
+            <path class="lt" id="c5" d="M806 300 L806 330 L950 330 L950 300 M806 330 L1040 330 L1040 300"/>
+          </g>
+          <path class="cable-thin" d="M206 238 C 190 238, 186 233, 170 233"/>
+
+          <!-- energy flow overlays -->
+          <path class="flow-p fp-ht" data-s="1" d="M96 62 L96 330 L238 330 L238 300"/>
+          <path class="flow-p fp-sig" data-s="1" d="M206 238 C 190 238, 186 233, 170 233"/>
+          <path class="flow-p fp-ht" data-s="2" d="M250 300 L250 330 L385 330 L385 300"/>
+          <path class="flow-p fp-ht" data-s="3" d="M410 300 L410 330 L568 330 L568 296"/>
+          <path class="flow-p fp-lt" data-s="4" d="M632 296 L632 330 L782 330 L782 300"/>
+          <path class="flow-p fp-lt" data-s="5" d="M806 300 L806 330 L950 330 L950 300 M806 330 L1040 330 L1040 300"/>
+
+          <!-- 0: HT pole -->
+          <g class="eq" data-s="0">
+            <rect x="74" y="24" width="12" height="276" fill="#9aa8b8"/>
+            <rect x="38" y="50" width="84" height="8" rx="2" fill="#7d8ea2"/>
+            <rect x="43" y="36" width="6" height="14" rx="2" fill="#b45309"/><rect x="73" y="26" width="6" height="14" rx="2" fill="#b45309"/><rect x="103" y="36" width="6" height="14" rx="2" fill="#b45309"/>
+            <path d="M100 58 L100 70" stroke="#b91c1c" stroke-width="4"/>
+          </g>
+
+          <!-- 1: meter box (small, before CTPT) + CTPT -->
+          <g class="eq" data-s="1">
+            <path d="M153 252 L153 300" stroke="#7d8ea2" stroke-width="4"/>
+            <rect x="136" y="212" width="34" height="42" rx="4" fill="url(#fl-metal)" stroke="#9aa8b8"/>
+            <rect x="142" y="220" width="22" height="12" rx="2" fill="#0f172a"/>
+            <text x="153" y="229.5" class="fl-lcd" text-anchor="middle">kWh</text>
+            <circle cx="153" cy="243" r="3" class="led"/>
+            <rect x="198" y="288" width="80" height="12" fill="#c3ccd8"/>
+            <rect x="204" y="206" width="68" height="82" rx="6" fill="url(#fl-metal)" stroke="#9aa8b8"/>
+            <rect x="214" y="186" width="8" height="20" rx="2" fill="#7c2d12"/><rect x="234" y="182" width="8" height="24" rx="2" fill="#7c2d12"/><rect x="254" y="186" width="8" height="20" rx="2" fill="#7c2d12"/>
+            <path d="M212 192 h12 M212 198 h12 M232 188 h12 M232 194 h12 M252 192 h12 M252 198 h12" stroke="#a16207" stroke-width="2"/>
+            <rect x="222" y="234" width="32" height="22" rx="3" fill="#fff" stroke="#c3ccd8"/>
+            <path d="M238 238 l-5 9 h10 z" fill="#facc15" stroke="#0f172a" stroke-width="1"/>
+          </g>
+
+          <!-- 2: HT VCB panel -->
+          <g class="eq" data-s="2">
+            <rect x="346" y="292" width="98" height="8" fill="#c3ccd8"/>
+            <rect x="350" y="138" width="90" height="154" rx="4" fill="url(#fl-beige)" stroke="#b8b09a"/>
+            <rect x="350" y="130" width="90" height="10" rx="2" fill="#475569"/>
+            <path d="M395 146 L395 286" stroke="#b8b09a" stroke-width="1.5"/>
+            <rect x="360" y="156" width="26" height="18" rx="2" fill="#0f172a"/>
+            <circle cx="366" cy="186" r="4" fill="#dc2626"/><circle cx="378" cy="186" r="4" class="led"/>
+            <rect x="404" y="200" width="26" height="26" rx="2" fill="#fff"/>
+            <path d="M417 204 l-9 16 h18 z" fill="#facc15" stroke="#0f172a" stroke-width="1"/>
+            <rect x="386" y="214" width="4" height="22" rx="2" fill="#6b6450"/>
+          </g>
+
+          <!-- 3: Transformer -->
+          <g class="eq" data-s="3">
+            <rect x="512" y="292" width="176" height="8" fill="#c3ccd8"/>
+            <rect x="552" y="126" width="96" height="22" rx="11" fill="url(#fl-tx)"/>
+            <path d="M566 148 L566 168 M634 148 L634 168" stroke="#34505f" stroke-width="5"/>
+            <rect x="540" y="166" width="120" height="126" rx="6" fill="url(#fl-tx)"/>
+            <g fill="#2c4554"><rect x="518" y="178" width="22" height="104" rx="3"/><rect x="660" y="178" width="22" height="104" rx="3"/></g>
+            <path d="M522 182 V278 M528 182 V278 M534 182 V278 M664 182 V278 M670 182 V278 M676 182 V278" stroke="#4b6a7c" stroke-width="2"/>
+            <rect x="574" y="150" width="7" height="16" rx="2" fill="#7c2d12"/><rect x="597" y="146" width="7" height="20" rx="2" fill="#7c2d12"/><rect x="620" y="150" width="7" height="16" rx="2" fill="#7c2d12"/>
+            <circle cx="584" cy="210" r="13" fill="#e5e7eb" stroke="#1f2937" stroke-width="2"/><circle cx="616" cy="210" r="13" fill="#e5e7eb" stroke="#1f2937" stroke-width="2"/>
+            <path d="M584 210 l6 -6 M616 210 l-5 -7" stroke="#dc2626" stroke-width="2"/>
+            <text x="600" y="256" class="fl-plate" text-anchor="middle">11 kV / 415 V</text>
+          </g>
+
+          <!-- 4: LT kiosk -->
+          <g class="eq" data-s="4">
+            <rect x="746" y="292" width="88" height="8" fill="#c3ccd8"/>
+            <rect x="750" y="166" width="80" height="126" rx="4" fill="url(#fl-metal)" stroke="#9aa8b8"/>
+            <rect x="746" y="160" width="88" height="10" rx="2" fill="#9aa8b8"/>
+            <path d="M790 172 L790 286" stroke="#9aa8b8" stroke-width="1.5"/>
+            <path d="M758 186 h24 M758 192 h24 M758 198 h24 M798 186 h24 M798 192 h24 M798 198 h24" stroke="#9aa8b8" stroke-width="2"/>
+            <rect x="760" y="214" width="22" height="22" rx="2" fill="#fff"/><path d="M771 217 l-8 14 h16 z" fill="#facc15" stroke="#0f172a" stroke-width="1"/>
+            <circle cx="808" cy="224" r="4" class="led"/>
+          </g>
+
+          <!-- 5: Chargers + car -->
+          <g class="eq" data-s="5">
+            <g><rect x="934" y="176" width="32" height="124" rx="7" fill="#13283f"/><rect x="940" y="186" width="20" height="16" rx="3" fill="#1d3550"/><circle cx="950" cy="216" r="4" class="led"/><path d="M966 236 c 12 0, 14 18, 6 30" stroke="#13283f" stroke-width="4" fill="none"/></g>
+            <g><rect x="1024" y="176" width="32" height="124" rx="7" fill="#13283f"/><rect x="1030" y="186" width="20" height="16" rx="3" fill="#1d3550"/><circle cx="1040" cy="216" r="4" class="led"/></g>
+            <g transform="translate(1200 0) scale(-1 1)"><use href="#ev-car" x="6" y="244" width="135" height="60"/></g>
+            <path class="car-lead" d="M1056 240 C 1068 244, 1072 270, 1076 281"/>
+          </g>
+
+          <!-- labels -->
+          <g class="fl-labels">
+            <g data-s="0"><text x="80" y="370">HT line</text><text x="80" y="388" class="sub">11 kV overhead</text></g>
+            <g data-s="1"><text x="153" y="200" class="small">Meter box</text><text x="238" y="370">CTPT</text><text x="238" y="388" class="sub">Metering unit</text></g>
+            <g data-s="2"><text x="395" y="370">HT VCB</text><text x="395" y="388" class="sub">Circuit breaker</text></g>
+            <g data-s="3"><text x="600" y="370">Transformer</text><text x="600" y="388" class="sub">11 kV to 415 V</text></g>
+            <g data-s="4"><text x="790" y="370">LT kiosk</text><text x="790" y="388" class="sub">Distribution panel</text></g>
+            <g data-s="5"><text x="1060" y="370">EV chargers</text><text x="1060" y="388" class="sub">AC and DC</text></g>
+          </g>
+        </svg>
       </div>
-      <ul>
-        <li><span class="lic lic-up">↓</span><span class="lt"><b>Added money</b>UPI · 04 Nov</span><em class="plus">+ ₹1,000.00</em></li>
-        <li><span class="lic lic-chg">⚡</span><span class="lt"><b>Charging hold</b>Raidurg Metro · 05 Nov</span><em>− ₹300.00</em></li>
-        <li><span class="lic lic-ref">↺</span><span class="lt"><b>Refund, unused amount</b>Raidurg Metro · 05 Nov</span><em class="plus">+ ₹16.80</em></li>
-        <li><span class="lic lic-chg">⚡</span><span class="lt"><b>Charging hold</b>Kondapur Metro · 06 Nov</span><em>− ₹200.00</em></li>
-        <li><span class="lic lic-ref">↺</span><span class="lt"><b>Refund, charger didn't start</b>Kondapur Metro · 06 Nov</span><em class="plus">+ ₹200.00</em></li>
-      </ul>
+      <p class="flow-cap" id="flow-cap" aria-live="polite">Power arrives from the utility's 11 kV overhead line and drops down the pole through an HT cable.</p>
     </div>
-  </div>
-</section>
 
-<!-- ================= HANDS-FREE ================= -->
-<section class="hands" id="autocharge">
-  <div class="wrap">
-    <div class="section-head">
-      <h2>Or skip the phone entirely</h2>
-      <p>For drivers who charge at the same places every week, and for fleets.</p>
-    </div>
-    <div class="hands-grid">
-      <article class="hand">
-        <div class="hand-art art-auto" aria-hidden="true">
-          <svg viewBox="0 0 440 170">
-            <use href="#ev-car" x="0" y="6" width="360" height="160"/>
-            <path class="ha-cable" d="M318 102 C 330 140, 362 150, 388 122"/>
-            <rect x="384" y="30" width="38" height="128" rx="9" class="ha-post"/>
-            <rect x="392" y="42" width="22" height="16" rx="3" class="ha-screen"/>
-            <circle cx="403" cy="74" r="5" class="ha-led"/>
-            <rect x="390" y="150" width="26" height="8" rx="2" fill="#0a2244"/>
-          </svg>
-          <span class="ha-status">Vehicle recognised · charging started</span>
-        </div>
-        <h3>Autocharge: plug in and walk away</h3>
-        <p>Switch it on for your vehicle once. After the first session, plugging into a supported charger starts charging by itself and bills your wallet. You get a notification at start and stop. On ISO 15118 cars and chargers, Plug &amp; Charge does the same job.</p>
-      </article>
-      <article class="hand">
-        <div class="hand-art art-rfid" aria-hidden="true">
-          <div class="reader"><span class="reader-led"></span><span class="ripple"></span><span class="ripple r2"></span></div>
-          <div class="rcard"><span class="rchip"></span><b>ChargeUI</b><i>•••• 4521</i></div>
-          <span class="ha-status">Card accepted · Kokapet SEZ</span>
-        </div>
-        <h3>RFID card: tap to charge</h3>
-        <p>Link a card by typing the number printed on it, then tap it on the charger. Lost it? Block it from the app in a second. Fleet and company cards bill to the group account, not the driver.</p>
-      </article>
-    </div>
-  </div>
-</section>
+    <ol class="infra-grid">
+      <li><span>1</span><h4>Site survey and feasibility</h4><p>Load and transformer assessment, charger placement.</p></li>
+      <li><span>2</span><h4>Power approvals</h4><p>Documentation, utility liaison and NOC follow-up.</p></li>
+      <li><span>3</span><h4>HT electrical works</h4><p>HT lines, VCB, transformer and HT panels.</p></li>
+      <li><span>4</span><h4>LT electrical works</h4><p>LT panels, MCCB, RCCB/RCBO, busbars and earthing.</p></li>
+      <li><span>5</span><h4>Cabling</h4><p>Cable laying, trays, trenching and termination.</p></li>
+      <li><span>6</span><h4>Charger installation</h4><p>AC and DC chargers, mounting and connections.</p></li>
+      <li><span>7</span><h4>Canopy and civil works</h4><p>Canopies, foundations and site finishing.</p></li>
+      <li><span>8</span><h4>Testing and commissioning</h4><p>Protection tests, charger communication, CMS integration.</p></li>
+    </ol>
+    <p class="fine">Approvals and statutory permissions remain subject to the relevant authorities.</p>
 
-<!-- ================= EVERYWHERE ================= -->
-<section class="every" id="apps">
-  <div class="wrap every-in">
-    <div class="every-copy">
-      <h2>Phone, tablet or laptop. One account.</h2>
-      <p>The Android and iOS apps and the web app share your wallet, vehicles and history. Add the web app to your home screen and it works like the installed one.</p>
-      <ul class="ticks">
-        <li>Light by default, with a dark mode for night drives</li>
-        <li>Stay signed in for 7 days, no passwords, just your phone number</li>
-        <li>Alerts when charging starts, finishes, fails or a refund lands</li>
-      </ul>
-    </div>
-    <div class="devices">
-      <div class="laptop"><div class="laptop-bar"><i></i><i></i><i></i></div><img src="assets/screens/desktop.svg" alt="ChargeUI web app on a laptop, showing nearby stations" loading="lazy" width="1440" height="1070"></div>
-      <img class="dev-phone dp-a" src="assets/screens/home-light.svg" alt="ChargeUI app home screen in light mode" loading="lazy" width="390" height="959">
-      <img class="dev-phone dp-b" src="assets/screens/home-dark.svg" alt="ChargeUI app home screen in dark mode" loading="lazy" width="390" height="995">
-    </div>
-  </div>
-</section>
-
-<!-- ================= OPERATORS ================= -->
-<section class="ops" id="operators">
-  <div class="wrap">
-    <div class="ops-head">
+    <div class="energy">
       <div>
-        <h2>Run your chargers on ChargeUI</h2>
-        <p>Bring your stations onto the network under your own brand. Your logo on your pins, your tariffs, and drivers paying from a wallet they already use.</p>
+        <h3>Solar and battery storage</h3>
+        <p>Pair your chargers with commercial solar and battery energy storage (BESS) to cut grid draw and support charging load at peak hours.</p>
       </div>
-      <a href="mailto:partners@chargeui.in?subject=Operator%20enquiry" class="btn btn-light">Talk to our team</a>
+      <a href="#contact" class="btn btn-light">Discuss your energy project</a>
     </div>
+  </div>
+</section>
 
-    <!-- Real admin portal screen (captured from the ChargeUI admin app, mock data) -->
-    <figure class="admin-shot" id="admin">
-      <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>admin.chargeui.in/dashboard</span></div>
-      <img src="assets/screens/admin-dashboard.jpg" alt="ChargeUI admin portal dashboard: station and charge point counts, energy, revenue and session charts, charger status, station overview, live map and recent alarms" width="2400" height="1500" loading="lazy">
-    </figure>
-    <p class="note note-dark">The ChargeUI admin portal, shown with demo data.</p>
-
-    <div class="ops-grid">
-      <div><h3>Any OCPP charger</h3><p>OCPP 1.6J and 2.0.1 from any OEM. Remote start and stop, soft and hard reset, unlock, firmware updates.</p></div>
-      <div><h3>Problems flagged in 10 minutes</h3><p>A charge point unavailable for 10 minutes alerts the station owner by app and email, every 30 minutes until it's fixed.</p></div>
-      <div><h3>White-label, revenue share</h3><p>Each operator gets its own scope, branding and revenue split. An operator switcher scopes every screen.</p></div>
-      <div><h3>Roaming over OCPI 2.2.1</h3><p>Open your chargers to partner networks and list theirs, with settlement handled.</p></div>
-      <div><h3>Analytics that export</h3><p>Revenue, energy and utilisation by station and charge point, by day, week or month. CSV export everywhere.</p></div>
-      <div><h3>Support and broadcasts</h3><p>Driver tickets with SLAs and refunds to wallet. Push announcements to the drivers you choose.</p></div>
-    </div>
+<!-- ================= INDUSTRIES ================= -->
+<section class="inds" id="industries">
+  <div class="wrap">
+    <h2>Built for every kind of charging business</h2>
+    <ul class="ind-list">
+      <li><b>Charge point operators</b>Run networks, stations and transactions centrally.</li>
+      <li><b>Franchise owners</b>Your brand, your app, daily settlements.</li>
+      <li><b>Apartments and gated communities</b>More chargers within your sanctioned load.</li>
+      <li><b>Offices and IT parks</b>Charging for employees and visitors.</li>
+      <li><b>Hotels and hospitality</b>Charging as a guest convenience.</li>
+      <li><b>Malls and retail</b>Infrastructure that brings shoppers in.</li>
+      <li><b>Highways and fuel stations</b>Fast charging for intercity travel.</li>
+      <li><b>Fleets and logistics</b>Monitor fleet charging and costs.</li>
+      <li><b>Automotive dealerships</b>Charging for deliveries and customers.</li>
+      <li><b>Government and institutions</b>Public charging infrastructure projects.</li>
+    </ul>
   </div>
 </section>
 
 <!-- ================= FAQ ================= -->
 <section class="faq" id="faq">
   <div class="wrap faq-in">
-    <h2>Questions drivers ask</h2>
+    <h2>Questions businesses ask</h2>
     <div class="faq-list">
       <details>
-        <summary>Do I need an account to find a charger?</summary>
-        <p>No. Browse the map, stations, prices and reviews as a guest. We ask for your phone number only when you tap Start charging, then bring you back to the same connector.</p>
+        <summary>What is ChargeUI?</summary>
+        <p>An EV charging technology and infrastructure company. We provide charging management software (CMS), white-label platforms, a driver app and end-to-end installation services.</p>
       </details>
       <details>
-        <summary>How do I sign in?</summary>
-        <p>With your 10-digit mobile number and a 6-digit OTP by SMS. There's no password to remember.</p>
+        <summary>How does load management help a gated community?</summary>
+        <p>Instead of reserving full power for every charger, ChargeUI shares your sanctioned load across the cars that are actually charging and rebalances as they come and go. You can install more chargers on the same connection. It depends on compatible chargers and site metering.</p>
       </details>
       <details>
-        <summary>Why rupees or kWh, and not battery %?</summary>
-        <p>Chargers measure energy, not your battery. Pick an amount or a number of units, and the session stops when it's reached, when you stop it, or when you unplug.</p>
+        <summary>Can I launch my own charging brand?</summary>
+        <p>Yes. White-label partners get the CMS and driver app with their own name, logo and colours, plus partner and franchise management.</p>
       </details>
       <details>
-        <summary>What happens to the money held from my wallet?</summary>
-        <p>You pay only for the energy delivered. The rest goes back to your wallet automatically when the session ends. If no energy was delivered at all, the whole amount comes back.</p>
+        <summary>How do daily settlements work?</summary>
+        <p>Each day's charging revenue is calculated per franchise owner, with payment processing and platform fees deducted, and a statement showing the net amount. The exact fees follow your commercial agreement.</p>
       </details>
       <details>
-        <summary>Can I book a charger in advance?</summary>
-        <p>Not yet. Charging is start-on-arrival. Tap Notify me on a busy connector to hear when it frees up.</p>
+        <summary>Does it work with chargers from different manufacturers?</summary>
+        <p>The platform works with OCPP 1.6J and 2.0.1 chargers. Actual compatibility depends on the manufacturer, firmware and protocol implementation, so we check each model first.</p>
       </details>
       <details>
-        <summary>Does it work for scooters and bikes?</summary>
-        <p>Yes. Add your two-wheeler under My vehicles and use the Two-wheeler filter on the map to find LEV connectors.</p>
+        <summary>Can I manage stations in several cities?</summary>
+        <p>Yes. All stations and charge points are monitored and managed from one login, with separate access for franchise partners.</p>
+      </details>
+      <details>
+        <summary>Do you install chargers too?</summary>
+        <p>Yes: site survey, power approvals, HT/LT electrical works, cabling, AC and DC charger installation, civil works, testing and commissioning.</p>
+      </details>
+      <details>
+        <summary>Can I see a demo first?</summary>
+        <p>Yes. Book a live demo below and we'll walk you through the CMS, load management, issue tracking and settlements on real screens.</p>
       </details>
     </div>
   </div>
 </section>
 
-<!-- ================= FINAL ================= -->
-<section class="final">
-  <div class="wrap final-in">
-    <h2>Your next charge is closer than you think.</h2>
-    <div class="hero-cta">
-      <a href="#" class="store"><span><small>Get it on</small>Google Play</span></a>
-      <a href="#" class="store"><span><small>Download on the</small>App Store</span></a>
+<!-- ================= CONTACT ================= -->
+<section class="contact" id="contact">
+  <div class="wrap contact-in">
+    <div class="contact-copy">
+      <h2>Let's build your charging business together</h2>
+      <p>Tell us what you're planning and we'll come back with a demo, a proposal or a quote.</p>
+      <div class="paths" role="radiogroup" aria-label="What are you looking for?">
+        <button type="button" class="path on" data-req="Charging management software (CMS) demo" role="radio" aria-checked="true"><b>I need charging software</b><span>For operators with existing chargers</span></button>
+        <button type="button" class="path" data-req="White-label CMS and driver app" role="radio" aria-checked="false"><b>I want my own branded platform</b><span>For startups and white-label partners</span></button>
+        <button type="button" class="path" data-req="EV charging franchise partnership" role="radio" aria-checked="false"><b>I want to start a franchise</b><span>For entrepreneurs and investors</span></button>
+        <button type="button" class="path" data-req="EV charging infrastructure / installation" role="radio" aria-checked="false"><b>I need chargers installed</b><span>For sites planning a station</span></button>
+      </div>
     </div>
+
+    <form class="form" id="lead" novalidate>
+      <div class="f2">
+        <label>Full name<input name="name" autocomplete="name" required></label>
+        <label>Company<input name="company" autocomplete="organization"></label>
+      </div>
+      <div class="f2">
+        <label>Mobile number<input name="phone" type="tel" autocomplete="tel" inputmode="tel" required></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required></label>
+      </div>
+      <div class="f2">
+        <label>City<input name="city" autocomplete="address-level2"></label>
+        <label>Business type
+          <select name="type">
+            <option>Charge point operator</option><option>Franchise / entrepreneur</option><option>Apartment / gated community</option><option>Commercial property</option><option>Fleet operator</option><option>Other</option>
+          </select>
+        </label>
+      </div>
+      <label>Requirement
+        <select name="req" id="f-req">
+          <option>Charging management software (CMS) demo</option><option>White-label CMS and driver app</option><option>EV charging franchise partnership</option><option>EV charging infrastructure / installation</option><option>Solar and battery storage</option><option>Fleet charging</option>
+        </select>
+      </label>
+      <label>Message<textarea name="msg" rows="3" placeholder="Number of chargers, location, timeline…"></textarea></label>
+      <button class="btn btn-lg btn-brand" type="submit">Send business enquiry</button>
+      <p class="form-note" id="form-note" aria-live="polite">Opens your email app with the details filled in.</p>
+    </form>
   </div>
 </section>
 </main>
 
 <footer class="footer">
-  <div class="wrap footer-in">
-    <img src="assets/logo.png" alt="ChargeUI" class="footer-logo" width="787" height="240">
-    <nav aria-label="Footer">
-      <a href="#how">How it works</a>
-      <a href="#map">Find chargers</a>
-      <a href="#operators">For operators</a>
-      <a href="#faq">FAQ</a>
-      <a href="mailto:support@chargeui.in">Support</a>
-      <a href="#">Terms</a>
-      <a href="#">Privacy</a>
-    </nav>
-    <p>© 2026 ChargeUI. Station photos and data shown are samples.</p>
+  <div class="wrap">
+    <div class="foot-top">
+      <div class="foot-brand">
+        <img src="assets/logo.png" alt="ChargeUI" class="footer-logo" width="787" height="240">
+        <p>Powering the future of electric mobility. Complete EV infrastructure and intelligent charging management.</p>
+      </div>
+      <div><h5>Solutions</h5><a href="#platform">CMS software</a><a href="#platform">White-label platform</a><a href="#franchise">Franchise enablement</a><a href="#app">EV driver app</a><a href="#infra">Charger installation</a><a href="#infra">Solar and BESS</a></div>
+      <div><h5>Company</h5><a href="#what">What we do</a><a href="#usp">Why ChargeUI</a><a href="#industries">Industries</a><a href="#faq">FAQ</a><a href="#contact">Contact</a></div>
+      <div><h5>Legal</h5><a href="#">Privacy policy</a><a href="#">Terms and conditions</a><a href="#">Refund and cancellation</a><a href="#">Data protection</a></div>
+    </div>
+    <p class="foot-copy">© 2026 ChargeUI. All rights reserved. Product screens show demo data.</p>
   </div>
 </footer>
 
-<script src="script.js"></script>
+<script src="script.js?v=3"></script>
 </body>
 </html>

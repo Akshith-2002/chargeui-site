@@ -3,31 +3,21 @@
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
-  const inr = (n) => '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const inr = (n, d = 0) => '₹' + n.toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d });
   const onView = (el, fn, opts = { threshold: 0.35 }) => {
     if (!el) return;
     if (!('IntersectionObserver' in window)) { fn(true); return; }
     new IntersectionObserver((entries) => entries.forEach((e) => fn(e.isIntersecting)), opts).observe(el);
   };
 
-  /* ---------- nav: scroll battery ---------- */
+  /* ---------- nav: scroll battery + section highlight ---------- */
   const nav = $('#nav'), fill = $('#batt-fill'), pct = $('#batt-pct'), batt = $('.nav-batt');
-  function onScroll() {
-    const max = document.documentElement.scrollHeight - innerHeight;
-    const p = max > 0 ? Math.min(100, Math.round((scrollY / max) * 100)) : 0;
-    fill.style.width = p + '%';
-    pct.textContent = p + '%';
-    batt.classList.toggle('full', p >= 99);
-    nav.classList.toggle('scrolled', scrollY > 8);
-  }
-  /* ---------- nav: highlight the link for the section in view ---------- */
   const navBar = $('nav', nav);
   const pill = document.createElement('span');
   pill.className = 'nav-pill';
   pill.setAttribute('aria-hidden', 'true');
   navBar.prepend(pill);
   const links = $$('a[href^="#"]', navBar);
-  // Every section in page order; ones without a nav link clear the highlight.
   const spySections = $$('main > section[id]');
   let current = null;
   function setCurrent(id) {
@@ -43,84 +33,207 @@
       pill.style.width = link.offsetWidth + 'px';
       pill.style.transform = `translateX(${link.offsetLeft}px)`;
       pill.classList.add('on');
-    } else {
-      pill.classList.remove('on');
-    }
+    } else pill.classList.remove('on');
   }
-  function spy() {
+  // USP tabs follow the block in view
+  const utabs = $$('.utab');
+  const ublocks = $$('.usp-block');
+  function onScroll() {
+    const max = document.documentElement.scrollHeight - innerHeight;
+    const p = max > 0 ? Math.min(100, Math.round((scrollY / max) * 100)) : 0;
+    fill.style.width = p + '%';
+    pct.textContent = p + '%';
+    batt.classList.toggle('full', p >= 99);
+    nav.classList.toggle('scrolled', scrollY > 8);
     const line = innerHeight * 0.4;
     let id = null;
     for (const s of spySections) if (s.getBoundingClientRect().top <= line) id = s.id;
-    setCurrent(id); // sections with no nav link (Autocharge, devices) clear the highlight
+    setCurrent(id);
+    let u = -1;
+    ublocks.forEach((b, i) => { if (b.getBoundingClientRect().top <= innerHeight * 0.5) u = i; });
+    utabs.forEach((t, i) => t.classList.toggle('on', i === u));
   }
+  addEventListener('scroll', onScroll, { passive: true });
   addEventListener('resize', () => { const id = current; current = null; setCurrent(id); });
-
-  addEventListener('scroll', () => { onScroll(); spy(); }, { passive: true });
   onScroll();
-  spy();
 
-  /* ---------- hero: live session ----------
-     Raidurg Metro, 120 kW DC, ₹24/kWh + 18% GST = ₹28.32/kWh. ₹500 held.
-     12.5 kWh delivered = ₹354.00, so ₹146.00 is refunded. */
-  const H = { HOLD: 500, RATE: 28.32, KWH: 12.5, RUN: 7000, PAUSE: 4500, C: 527.8 };
-  const live = $('#hero-live');
-  if (live) {
-    const el = { ring: $('#h-ring'), kwh: $('#h-kwh'), kw: $('#h-kw'), min: $('#h-min'), bat: $('#h-bat'), hold: $('#h-hold'), title: $('#h-title') };
-    const ta = $('#toast-a'), tb = $('#toast-b');
-    const draw = (k) => {
-      el.ring.style.strokeDashoffset = H.C * (1 - k / H.KWH);
-      el.kwh.textContent = k.toFixed(1);
-      el.min.textContent = Math.round(k / 1.0);
-      el.bat.textContent = Math.round(38 + (k / H.KWH) * 33);
-    };
-    const finish = () => {
-      draw(H.KWH);
-      el.kw.textContent = '0';
-      el.title.textContent = 'Charging complete';
-      live.classList.add('done');
-      const back = H.HOLD - H.KWH * H.RATE;
-      el.hold.textContent = inr(back) + ' refunded to your wallet';
-      ta.classList.remove('show');
-      tb.classList.add('show');
-    };
-    const reset = () => {
-      live.classList.remove('done');
-      el.title.textContent = 'Charging';
-      el.hold.textContent = inr(H.HOLD) + ' held from wallet';
-      tb.classList.remove('show');
-      draw(0);
-    };
-    if (reduced) { finish(); }
-    else {
-      const run = () => {
-        reset();
-        setTimeout(() => ta.classList.add('show'), 500);
-        const t0 = performance.now();
-        const tick = (now) => {
-          const t = Math.min(1, (now - t0) / H.RUN);
-          const eased = 1 - Math.pow(1 - t, 1.4);
-          draw(H.KWH * eased);
-          el.kw.textContent = t < 1 ? String(Math.round(58 + Math.sin(now / 300) * 5 - t * 14)) : '0';
-          if (t < 1) requestAnimationFrame(tick);
-          else { finish(); setTimeout(run, H.PAUSE); }
-        };
-        requestAnimationFrame(tick);
-      };
-      run();
-    }
+  /* ---------- hero: rotating operational notifications ---------- */
+  const toast = $('#htoast');
+  if (toast) {
+    const msgs = [
+      { ico: '⚡', cls: '', t: 'Load rebalanced', s: 'Green Meadows · 4 cars sharing 22 kW' },
+      { ico: '!', cls: 'amber', t: 'Ticket #1048 opened automatically', s: 'GR-0419-A fault · assigned to Ravi K.' },
+      { ico: '✓', cls: 'green', t: 'Ticket #1048 resolved', s: 'Charger back online in 44 minutes' },
+      { ico: '₹', cls: 'green', t: 'Daily settlement ready', s: 'Green Meadows · ₹9,500 net for yesterday' },
+    ];
+    let i = 0;
+    const ico = $('#ht-ico'), tt = $('#ht-title'), ts = $('#ht-sub');
+    if (!reduced) setInterval(() => {
+      toast.classList.add('swap');
+      setTimeout(() => {
+        i = (i + 1) % msgs.length;
+        const m = msgs[i];
+        ico.textContent = m.ico; ico.className = 't-ico ' + m.cls; tt.textContent = m.t; ts.textContent = m.s;
+        toast.classList.remove('swap');
+      }, 380);
+    }, 3600);
   }
 
-  /* ---------- decorative QR (fixed pseudo-random modules + finder squares) ---------- */
+  /* ---------- USP 1: dynamic AC load management ---------- */
+  const lb = $('#lb');
+  if (lb) {
+    const MAX_KW = 7.4, N = 6;
+    const bayBox = $('#lb-bays'), toggle = $('#lb-toggle'), range = $('#lb-limit');
+    const out = $('#lb-limit-out'), totalEl = $('#lb-total'), limitV = $('#lb-limit-v'), fillEl = $('#lb-fill'), mark = $('#lb-limit-mark'), msg = $('#lb-msg');
+    const names = ['A-101', 'A-204', 'B-002', 'B-305', 'C-110', 'C-402'];
+    const state = Array(N).fill(false);
+    let touched = false;
+    const bays = names.map((n, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'bay';
+      b.innerHTML = `<span class="bay-id"><span>Bay ${i + 1}</span><span>Flat ${n}</span></span>
+        <span class="bay-car"><svg viewBox="0 0 360 160" aria-hidden="true"><use href="#ev-car"/></svg></span>
+        <span class="bay-empty">Empty · tap to plug in</span>
+        <span class="bay-kw"><span class="kw">0.0</span><small>kW</small></span>
+        <span class="bay-bar"><i></i></span>`;
+      b.addEventListener('click', () => { touched = true; state[i] = !state[i]; render(); });
+      bayBox.appendChild(b);
+      return b;
+    });
+    function render() {
+      const limit = +range.value;
+      const on = toggle.checked;
+      const n = state.filter(Boolean).length;
+      const share = n ? (on ? Math.min(MAX_KW, limit / n) : MAX_KW) : 0;
+      const total = share * n;
+      const scale = 44.4;
+      out.textContent = limit + ' kW';
+      limitV.textContent = limit;
+      totalEl.textContent = total.toFixed(1);
+      fillEl.style.width = Math.min(100, (total / scale) * 100) + '%';
+      mark.style.left = (limit / scale) * 100 + '%';
+      const over = total > limit + 0.01;
+      lb.classList.toggle('over', over);
+      lb.classList.toggle('ok', !over && n > 0);
+      bays.forEach((b, i) => {
+        const kw = state[i] ? share : 0;
+        b.classList.toggle('on', state[i]);
+        b.setAttribute('aria-label', `Bay ${i + 1}, ${state[i] ? 'car charging at ' + kw.toFixed(1) + ' kilowatts' : 'empty'}. Tap to ${state[i] ? 'unplug' : 'plug in'}.`);
+        $('.kw', b).textContent = kw.toFixed(1);
+        $('.bay-bar i', b).style.width = (kw / MAX_KW) * 100 + '%';
+      });
+      if (!n) msg.textContent = 'Tap a bay to plug a car in.';
+      else if (over) msg.textContent = `${total.toFixed(1)} kW is over the ${limit} kW limit. Without load management the main breaker trips and every car stops charging.`;
+      else if (on && share < MAX_KW) msg.textContent = `${n} cars sharing ${limit} kW at ${share.toFixed(1)} kW each. Nothing trips, everyone charges.`;
+      else msg.textContent = `${n} car${n > 1 ? 's' : ''} charging at full ${MAX_KW} kW. Within the limit.`;
+    }
+    toggle.addEventListener('change', () => { touched = true; render(); });
+    range.addEventListener('input', () => { touched = true; render(); });
+    render();
+    // Cars arrive one by one the first time the demo comes into view.
+    let started = false;
+    onView(lb, (v) => {
+      if (!v || started) return;
+      started = true;
+      const order = [0, 2, 4, 1];
+      order.forEach((k, j) => setTimeout(() => { if (!touched) { state[k] = true; render(); } }, reduced ? 0 : 500 + j * 1100));
+    }, { threshold: 0.4 });
+  }
+
+  /* ---------- USP 2: issue tracking timeline ---------- */
+  const it = $('#it');
+  if (it) {
+    const stages = $$('#it-stages li'), logs = $$('#it-log li'), prog = $('#it-progress'), badge = $('#it-badge');
+    const BADGE = ['Open', 'Open', 'Assigned', 'In progress', 'Resolved'];
+    let timers = [];
+    function show(k) {
+      stages.forEach((s, i) => s.classList.toggle('on', i <= k));
+      logs.forEach((l, i) => { l.classList.toggle('on', i <= k); l.classList.toggle('cur', i === k); });
+      prog.style.width = (k / (stages.length - 1)) * 100 + '%';
+      badge.textContent = BADGE[k];
+      badge.className = 'it-badge' + (k === 4 ? ' done' : k >= 2 ? ' prog' : '');
+      it.classList.toggle('done', k === 4);
+    }
+    function play() {
+      timers.forEach(clearTimeout); timers = [];
+      if (reduced) { show(4); return; }
+      show(0);
+      for (let k = 1; k < 5; k++) timers.push(setTimeout(() => show(k), k * 1500));
+    }
+    $('#it-replay').addEventListener('click', play);
+    let played = false;
+    onView(it, (v) => { if (v && !played) { played = true; play(); } }, { threshold: 0.45 });
+  }
+
+  /* ---------- USP 3: daily settlement ---------- */
+  const st = $('#st');
+  if (st) {
+    // Illustrative: processing fee 2%, platform fee 3% of gross.
+    const DAYS = [
+      { d: 'Mon', n: 2, gross: 10000 },
+      { d: 'Tue', n: 3, gross: 8420 },
+      { d: 'Wed', n: 4, gross: 12650 },
+      { d: 'Thu', n: 5, gross: 9310 },
+      { d: 'Fri', n: 6, gross: 11080, today: true },
+    ];
+    const box = $('#st-days');
+    const btns = DAYS.map((x, i) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'st-day';
+      b.setAttribute('role', 'tab');
+      b.innerHTML = `${x.d}<b>${x.n}</b>Nov`;
+      b.addEventListener('click', () => pick(i));
+      box.appendChild(b);
+      return b;
+    });
+    function pick(i) {
+      const x = DAYS[i];
+      const proc = x.gross * 0.02, plat = x.gross * 0.03, net = x.gross - proc - plat;
+      const kwh = Math.round(x.gross / 16.52); // ₹14/kWh + 18% GST
+      btns.forEach((b, k) => { b.classList.toggle('on', k === i); b.setAttribute('aria-selected', k === i); });
+      $('#st-gross').textContent = inr(x.gross);
+      $('#st-proc').textContent = '− ' + inr(proc);
+      $('#st-plat').textContent = '− ' + inr(plat);
+      $('#st-net').textContent = inr(net);
+      $('#st-kwh').textContent = kwh.toLocaleString('en-IN');
+      $('#st-sessions').textContent = Math.round(kwh / 13);
+      const status = $('#st-status');
+      status.textContent = x.today ? 'Processing' : 'Paid out';
+      status.className = 'st-status' + (x.today ? ' proc' : '');
+      $('#st-when').textContent = x.today ? 'Settles to your bank tomorrow morning' : `Credited to your bank on ${DAYS[i + 1].d} ${DAYS[i + 1].n} Nov`;
+    }
+    pick(0);
+  }
+
+  /* ---------- admin screenshot settles flat ---------- */
+  const adminShot = $('#admin');
+  if (adminShot) {
+    if (reduced) adminShot.classList.add('in');
+    else onView(adminShot, (v) => { if (v) adminShot.classList.add('in'); }, { threshold: 0.2 });
+  }
+
+  /* ---------- white-label brand switcher ---------- */
+  const wl = $('#wl');
+  if (wl) {
+    $$('.wl-b', wl).forEach((b) => b.addEventListener('click', () => {
+      $$('.wl-b', wl).forEach((x) => { x.classList.toggle('on', x === b); x.setAttribute('aria-checked', x === b); });
+      wl.style.setProperty('--c1', b.dataset.c1);
+      wl.style.setProperty('--c2', b.dataset.c2);
+      $$('.wl-name', wl).forEach((n) => (n.textContent = b.dataset.name));
+    }));
+  }
+
+  /* ---------- driver app story: sticky phone follows the step in view ---------- */
   $$('.qr').forEach((box) => {
     const N = 21; let seed = 7; const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
     const inFinder = (x, y) => (x < 8 && y < 8) || (x > N - 9 && y < 8) || (x < 8 && y > N - 9);
     let r = '';
     for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) if (!inFinder(x, y) && rnd() > 0.52) r += `<rect x="${x}" y="${y}" width="1" height="1"/>`;
     const finder = (x, y) => `<rect x="${x}" y="${y}" width="7" height="7"/><rect x="${x + 1}" y="${y + 1}" width="5" height="5" fill="#fff"/><rect x="${x + 2}" y="${y + 2}" width="3" height="3"/>`;
-    box.innerHTML = `<svg viewBox="0 0 ${N} ${N}" shape-rendering="crispEdges" fill="#0b1220">${r}${finder(0, 0)}${finder(N - 7, 0)}${finder(0, N - 7)}</svg>`;
+    box.innerHTML = `<svg viewBox="0 0 ${N} ${N}" shape-rendering="crispEdges" fill="#0f172a">${r}${finder(0, 0)}${finder(N - 7, 0)}${finder(0, N - 7)}</svg>`;
   });
-
-  /* ---------- story: sticky phone follows the step in view ---------- */
   const stack = $('#story-stack'), dotsBox = $('#story-dots');
   const steps = $$('.story-step');
   if (stack && steps.length) {
@@ -146,133 +259,90 @@
     }
   }
 
-  /* ---------- map: sample stations from the app's demo data ---------- */
-  const OPS = {
-    uic: { name: 'ChargeUI', mono: '⚡', color: 'linear-gradient(135deg,#0065DA,#01C7E7)' },
-    pa: { name: 'Partner operator VX', mono: 'VX', color: '#0f9f8f' },
-    pb: { name: 'Partner operator AM', mono: 'AM', color: '#ea6c0a' },
-    pc: { name: 'Partner operator GR', mono: 'GR', color: '#7c3aed' },
-  };
-  const ac = (type, kw, price, free, total) => ({ cur: 'AC', type, kw, price, free, total });
-  const dc = (type, kw, price, free, total) => ({ cur: 'DC', type, kw, price, free, total });
-  const STATIONS = [
-    { id: 'hitech', name: 'Hitech City Hub', area: 'HITEC City', op: 'uic', lat: 17.4504, lng: 78.381, hours: 'Open 24×7', rating: 4.2, reviews: 318, photo: 'station-1', amen: ['Café', 'Restroom', 'Wi-Fi', 'Covered parking'], conns: [ac('Type 2', 7.4, 16, 1, 2), dc('CCS2', 60, 21, 3, 4)] },
-    { id: 'inorbit', name: 'Inorbit Mall, P2', area: 'Madhapur', op: 'pa', lat: 17.4344, lng: 78.3866, hours: '10 am – 11 pm', rating: 4.0, reviews: 142, photo: 'station-3', amen: ['Food court', 'Shopping', 'Restroom'], conns: [ac('Type 2', 22, 16, 2, 4)] },
-    { id: 'kondapur', name: 'Kondapur Metro', area: 'Kondapur', op: 'pb', lat: 17.462, lng: 78.357, hours: 'Open 24×7', rating: 3.6, reviews: 57, photo: 'station-7', amen: ['Metro access', 'CCTV'], conns: [dc('CCS2', 30, 19, 0, 2)] },
-    { id: 'raidurg', name: 'Raidurg Metro', area: 'Gachibowli', op: 'pc', lat: 17.4399, lng: 78.3828, hours: 'Open 24×7', rating: 4.4, reviews: 201, photo: 'station-2', amen: ['Metro access', 'Restroom', '24×7 security'], conns: [dc('CCS2', 120, 24, 2, 2), dc('CCS2', 60, 24, 1, 1)] },
-    { id: 'gachi', name: 'Gachibowli Stadium', area: 'Gachibowli', op: 'pc', lat: 17.4474, lng: 78.348, hours: '6 am – 10 pm', rating: 4.1, reviews: 88, photo: 'station-5', amen: ['Parking', 'Restroom', 'Food court'], conns: [dc('CCS2', 60, 20, 1, 2), dc('CHAdeMO', 50, 20, 1, 1)] },
-    { id: 'banjara', name: 'Banjara Hills Rd 12', area: 'Banjara Hills', op: 'uic', lat: 17.4156, lng: 78.4347, hours: 'Open 24×7', rating: 4.6, reviews: 64, photo: 'station-4', amen: ['Café', 'Two-wheeler bays', 'Wi-Fi'], conns: [dc('CCS2', 60, 21, 2, 2), ac('LEV', 3.3, 14, 2, 2)] },
-    { id: 'jubilee', name: 'Jubilee Hills Checkpost', area: 'Jubilee Hills', op: 'pa', lat: 17.4293, lng: 78.4126, hours: 'Open 24×7', rating: 3.9, reviews: 39, photo: 'station-8', amen: ['CCTV', 'Parking'], conns: [dc('CCS2', 60, 23, 1, 2)] },
-    { id: 'kokapet', name: 'Kokapet SEZ', area: 'Financial District', op: 'uic', lat: 17.4136, lng: 78.3372, hours: 'Open 24×7', rating: 4.3, reviews: 22, photo: 'station-6', amen: ['Restroom', 'Covered parking', 'Wi-Fi'], conns: [dc('CCS2', 120, 22, 2, 2)] },
-  ];
-  const FILTERS = {
-    all: () => true,
-    ac: (s) => s.conns.some((c) => c.cur === 'AC'),
-    dc: (s) => s.conns.some((c) => c.cur === 'DC'),
-    avail: (s) => s.conns.some((c) => c.free > 0),
-    fast: (s) => s.conns.some((c) => c.kw >= 50),
-    lev: (s) => s.conns.some((c) => c.type === 'LEV'),
-  };
-  const pinsBox = $('#pins'), card = $('#stcard'), count = $('#fcount');
-  if (pinsBox && card) {
-    const pos = (s) => ({ x: ((s.lng - 78.325) / 0.12) * 100, y: ((17.472 - s.lat) / 0.068) * 100 });
-    const minPrice = (s) => Math.min(...s.conns.map((c) => c.price));
-    const free = (s) => s.conns.reduce((a, c) => a + c.free, 0);
-    const logo = (op) => `<span class="pin-logo" style="background:${OPS[op].color}">${OPS[op].mono}</span>`;
-
-    const pins = STATIONS.map((s, i) => {
-      const { x, y } = pos(s);
-      const b = document.createElement('button');
-      b.className = 'pin';
-      b.style.left = x + '%';
-      b.style.top = y + '%';
-      b.style.animationDelay = i * 70 + 'ms';
-      b.setAttribute('aria-label', `${s.name}, ${free(s)} connectors free, from ₹${minPrice(s)} per kWh`);
-      b.innerHTML = `<span class="pin-head">${logo(s.op)}<span class="pin-price">₹${minPrice(s)}</span><span class="pin-dot ${free(s) > 0 ? 'ok' : 'busy'}"></span></span><span class="pin-tail"></span>`;
-      b.addEventListener('click', () => select(s.id));
-      pinsBox.appendChild(b);
-      return b;
-    });
-
-    function select(id) {
-      const s = STATIONS.find((x) => x.id === id);
-      pins.forEach((p, k) => p.classList.toggle('sel', STATIONS[k].id === id));
-      const any = free(s) > 0;
-      card.innerHTML = `
-        <img src="assets/photos/${s.photo}.jpg" alt="Charging bay at ${s.name} (sample photo)">
-        <div class="st-body">
-          <div class="st-op">${logo(s.op)}${OPS[s.op].name}</div>
-          <h3>${s.name}</h3>
-          <p class="st-meta">${s.area} · ${s.hours} · <span style="color:#f5b301">★</span> ${s.rating} (${s.reviews})</p>
-          <div class="conns">${s.conns.map((c) => `<div class="conn"><span><b>${c.cur} · ${c.type} ${c.kw} kW</b><br><span class="st-meta">₹${c.price}/kWh + GST</span></span><em class="${c.free ? 'ok' : 'none'}">${c.free}/${c.total} free</em></div>`).join('')}</div>
-          <div class="st-tags">${s.amen.map((a) => `<span>${a}</span>`).join('')}</div>
-          <button class="st-cta ${any ? '' : 'notify'}" tabindex="-1">${any ? 'Charge here' : 'Notify me when free'}</button>
-        </div>`;
+  /* ---------- power flow: energise each stage in turn ---------- */
+  const flow = $('#flow');
+  if (flow) {
+    const CAPS = [
+      'Power arrives from the utility\'s 11 kV overhead line and drops down the pole through an HT cable.',
+      'The CTPT steps current and voltage down to measurable levels. Thin signal wires feed the meter box beside it, which records every unit.',
+      'The HT vacuum circuit breaker (VCB) protects everything after it and cuts the supply instantly if there is a fault.',
+      'The transformer steps 11 kV down to 415 V, the voltage your site and chargers use.',
+      'The LT kiosk distributes power to each charger through MCCB and RCD protection.',
+      'Power reaches the chargers. From here, ChargeUI\'s CMS monitors every session and balances load across them.',
+    ];
+    const btns = $$('.flow-steps button', flow);
+    const cap = $('#flow-cap');
+    const byStage = (sel, k) => $$(sel + `[data-s="${k}"]`, flow);
+    let k = -1, timer = null, auto = true;
+    function show(n) {
+      k = n;
+      for (let s = 0; s <= 5; s++) {
+        const live = s <= n;
+        byStage('.flow-p', s).forEach((p) => p.classList.toggle('live', live));
+        byStage('.eq', s).forEach((e) => { e.classList.toggle('live', live); e.classList.toggle('cur', s === n); });
+        byStage('.fl-labels g', s).forEach((g) => { g.classList.toggle('live', live); g.classList.toggle('cur', s === n); });
+      }
+      btns.forEach((b, i) => { b.classList.toggle('on', i === n); b.classList.toggle('done', i < n); b.setAttribute('aria-selected', i === n); });
+      cap.textContent = CAPS[n];
+      // On narrow screens the diagram scrolls sideways: keep the current equipment in view.
+      const sc = $('.flow-scroll', flow), svg = $('.flow-svg', flow);
+      if (sc.scrollWidth > sc.clientWidth + 4) {
+        const CENTERS = [80, 238, 395, 600, 790, 1060];
+        sc.scrollTo({ left: (CENTERS[n] / 1200) * svg.clientWidth - sc.clientWidth / 2, behavior: reduced ? 'auto' : 'smooth' });
+      }
     }
-
-    $$('.fchip').forEach((chip) => chip.addEventListener('click', () => {
-      $$('.fchip').forEach((c) => c.classList.toggle('on', c === chip));
-      const f = FILTERS[chip.dataset.f];
-      let n = 0, first = null;
-      STATIONS.forEach((s, k) => {
-        const ok = f(s);
-        pins[k].classList.toggle('hide', !ok);
-        if (ok) { n++; first = first || s.id; }
-      });
-      count.textContent = n + (n === 1 ? ' station' : ' stations');
-      const sel = STATIONS.findIndex((s, k) => pins[k].classList.contains('sel'));
-      if (sel < 0 || pins[sel].classList.contains('hide')) { if (first) select(first); }
-    }));
-
-    select('raidurg');
-    if (!reduced) {
-      let dropped = false;
-      onView($('#mapbox'), (v) => { if (v && !dropped) { dropped = true; pins.forEach((p) => p.classList.add('drop')); } }, { threshold: 0.3 });
-    }
-  }
-
-  /* ---------- wallet: rows slide in, balance counts up ---------- */
-  const ledger = $('#ledger'), bal = $('#bal');
-  if (ledger) {
-    const target = parseFloat(bal.dataset.to);
-    if (reduced) { bal.textContent = inr(target); }
-    else {
-      ledger.classList.add('anim');
-      let done = false;
-      onView(ledger, (v) => {
-        if (!v || done) return;
-        done = true;
-        ledger.classList.add('in');
-        const t0 = performance.now();
-        const step = (now) => {
-          const t = Math.min(1, (now - t0) / 1400);
-          bal.textContent = inr(target * (1 - Math.pow(1 - t, 3)));
-          if (t < 1) requestAnimationFrame(step);
-        };
-        requestAnimationFrame(step);
-      });
-    }
-  }
-
-  /* ---------- hands-free tiles: replay while visible ---------- */
-  $$('.hand-art').forEach((art) => {
-    if (reduced) { art.classList.add('go'); return; }
-    let timer = null;
-    const cycle = () => {
-      art.classList.remove('go');
-      void art.offsetWidth;
-      setTimeout(() => art.classList.add('go'), 300);
-    };
-    onView(art, (v) => {
+    function loop() {
       clearInterval(timer);
-      if (v) { cycle(); timer = setInterval(cycle, 5200); }
-    }, { threshold: 0.5 });
-  });
+      timer = setInterval(() => {
+        if (!auto) return;
+        show(k >= 5 ? 0 : k + 1);
+      }, k >= 5 ? 4000 : 2400);
+    }
+    btns.forEach((b, i) => b.addEventListener('click', () => { auto = false; clearInterval(timer); show(i); }));
+    if (reduced) show(5);
+    else {
+      let started = false;
+      onView(flow, (v) => {
+        if (v && !started) { started = true; show(0); loop(); }
+        if (!v) clearInterval(timer);
+        else if (started && auto) loop();
+      }, { threshold: 0.35 });
+    }
+  }
 
-  /* ---------- admin screen: settles flat as it scrolls in ---------- */
-  const adminShot = $('#admin');
-  if (adminShot) {
-    if (reduced) adminShot.classList.add('in');
-    else onView(adminShot, (v) => { if (v) adminShot.classList.add('in'); }, { threshold: 0.2 });
+  /* ---------- contact: enquiry paths + mailto form ---------- */
+  const reqSel = $('#f-req');
+  $$('.path').forEach((p) => p.addEventListener('click', () => {
+    $$('.path').forEach((x) => { x.classList.toggle('on', x === p); x.setAttribute('aria-checked', x === p); });
+    reqSel.value = p.dataset.req;
+  }));
+  const form = $('#lead');
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const note = $('#form-note');
+      const req = ['name', 'phone', 'email'].map((n) => form.elements[n]);
+      let bad = null;
+      req.forEach((el) => {
+        const v = el.value.trim();
+        const ok = el.name === 'email' ? /^\S+@\S+\.\S+$/.test(v) : el.name === 'phone' ? v.replace(/\D/g, '').length >= 10 : v.length > 1;
+        el.classList.toggle('bad', !ok);
+        if (!ok && !bad) bad = el;
+      });
+      if (bad) {
+        note.classList.add('err');
+        note.textContent = bad.name === 'email' ? 'Enter a valid email address.' : bad.name === 'phone' ? 'Enter a 10-digit mobile number.' : 'Enter your name.';
+        bad.focus();
+        return;
+      }
+      note.classList.remove('err');
+      const f = form.elements;
+      const body = [
+        `Name: ${f.name.value}`, `Company: ${f.company.value}`, `Mobile: ${f.phone.value}`, `Email: ${f.email.value}`,
+        `City: ${f.city.value}`, `Business type: ${f.type.value}`, `Requirement: ${f.req.value}`, '', f.msg.value,
+      ].join('\n');
+      location.href = `mailto:partners@chargeui.in?subject=${encodeURIComponent('Business enquiry: ' + f.req.value)}&body=${encodeURIComponent(body)}`;
+      note.textContent = 'Your email app should open with the enquiry filled in.';
+    });
   }
 })();
