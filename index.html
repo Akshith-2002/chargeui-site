@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ChargeUI · EV charging across India</title>
+  <meta name="description" content="Find EV chargers for your car or two-wheeler, pay by rupees or kWh from one wallet, and get unused money back automatically. Android, iOS and web.">
+  <meta name="theme-color" content="#002B5E">
+  <link rel="icon" href="assets/favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- Shared EV illustration: compact electric SUV, side view, front facing left. Used by the Autocharge tile and step 4. -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="ev-paint" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff"/><stop offset=".45" stop-color="#e9eff6"/><stop offset=".7" stop-color="#c9d5e3"/><stop offset="1" stop-color="#9fb0c5"/>
+    </linearGradient>
+    <linearGradient id="ev-glass" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b4d86"/><stop offset=".55" stop-color="#0a2547"/><stop offset="1" stop-color="#05162d"/>
+    </linearGradient>
+    <linearGradient id="ev-glare" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".35"/><stop offset="1" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="ev-rim" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#eef2f7"/><stop offset=".7" stop-color="#aeb9c7"/><stop offset="1" stop-color="#6c7a8c"/>
+    </radialGradient>
+    <linearGradient id="ev-cladding" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2a3546"/><stop offset="1" stop-color="#121a26"/>
+    </linearGradient>
+    <g id="ev-wheel">
+      <circle r="23" fill="#0c121b"/>
+      <circle r="21" fill="none" stroke="#1d2735" stroke-width="2"/>
+      <circle r="14.5" fill="url(#ev-rim)"/>
+      <g stroke="#5d6b7d" stroke-width="3.2" stroke-linecap="round">
+        <path d="M0 -3 L0 -13"/><path d="M2.9 -0.9 L12.4 -4"/><path d="M1.8 2.4 L7.6 10.5"/><path d="M-1.8 2.4 L-7.6 10.5"/><path d="M-2.9 -0.9 L-12.4 -4"/>
+      </g>
+      <circle r="3.6" fill="#2b3644"/><circle r="1.4" fill="#0065DA"/>
+    </g>
+    <symbol id="ev-car" viewBox="0 0 360 160">
+      <ellipse cx="182" cy="146" rx="168" ry="9" fill="#000" opacity=".28"/>
+      <!-- body -->
+      <path fill="url(#ev-paint)" d="M24 128 C17 126 15 118 16 110 C17 101 24 96 36 94 L112 85 C128 72 146 60 166 54 C190 47 252 46 274 50 C294 54 312 66 326 78 C337 84 344 92 345 104 L346 118 C346 126 340 130 332 130 L312 130 A30 30 0 0 0 252 130 L118 130 A30 30 0 0 0 58 130 Z"/>
+      <!-- lower cladding and wheel arches -->
+      <path fill="url(#ev-cladding)" d="M18 118 L58 120 A30 30 0 0 1 118 120 L252 120 A30 30 0 0 1 312 120 L346 118 L346 122 C346 127 341 130 333 130 L312 130 A30 30 0 0 0 252 130 L118 130 A30 30 0 0 0 58 130 L24 128 C19 126 17 122 18 118 Z"/>
+      <!-- greenhouse -->
+      <path fill="url(#ev-glass)" d="M128 84 C142 72 156 63 172 58 C192 53 246 52 268 56 C284 59 298 68 309 79 L300 82 L136 86 Z"/>
+      <path fill="url(#ev-glare)" d="M150 80 L176 59 L196 57 L170 82 Z"/>
+      <path d="M215 55 L213 84" stroke="#0a1a30" stroke-width="5"/>
+      <path d="M128 84 C142 72 156 63 172 58 C192 53 246 52 268 56 C284 59 298 68 309 79" fill="none" stroke="#0b1a2e" stroke-width="2.5"/>
+      <!-- roof rail -->
+      <path d="M176 51 C200 46 246 45 270 48" fill="none" stroke="#2b3644" stroke-width="3" stroke-linecap="round"/>
+      <!-- shoulder highlight and door shut lines -->
+      <path d="M40 101 C120 95 240 92 336 96" fill="none" stroke="#fff" stroke-width="2" opacity=".9"/>
+      <path d="M140 88 L138 120 M214 86 L214 120 M292 84 L296 118" fill="none" stroke="#8a9bb0" stroke-width="1.2"/>
+      <path d="M166 100 h14 M240 99 h14" stroke="#7d8ea4" stroke-width="2.4" stroke-linecap="round"/>
+      <!-- mirror -->
+      <path d="M138 80 C134 78 128 79 126 83 L134 86 Z" fill="#1d2735"/>
+      <!-- LED headlight strip and tail light -->
+      <path d="M20 103 C30 99 44 97 60 96" fill="none" stroke="#01C7E7" stroke-width="3" stroke-linecap="round"/>
+      <path d="M20 103 C30 99 44 97 60 96" fill="none" stroke="#9ff0ff" stroke-width="1" stroke-linecap="round"/>
+      <path d="M332 86 C338 90 343 95 345 100" fill="none" stroke="#ef4444" stroke-width="3.5" stroke-linecap="round"/>
+      <!-- charge port (rear quarter) -->
+      <rect x="312" y="92" width="12" height="9" rx="2.5" fill="#0b1a2e"/>
+      <circle class="ev-port" cx="318" cy="96.5" r="2.4" fill="#01C7E7"/>
+      <!-- wheels -->
+      <use href="#ev-wheel" x="88" y="130"/>
+      <use href="#ev-wheel" x="282" y="130"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- ================= NAV ================= -->
+<header class="nav" id="nav">
+  <div class="wrap nav-in">
+    <a href="#top" class="nav-logo" aria-label="ChargeUI home"><img src="assets/logo.png" alt="ChargeUI" width="787" height="240"></a>
+    <nav aria-label="Main">
+      <a href="#how">How it works</a>
+      <a href="#map">Find chargers</a>
+      <a href="#wallet">Wallet</a>
+      <a href="#operators">For operators</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="nav-batt" aria-hidden="true" title="How far you've scrolled">
+      <span class="batt"><span class="batt-fill" id="batt-fill"></span></span>
+      <span class="batt-pct" id="batt-pct">0%</span>
+    </div>
+    <a href="#get" class="btn btn-sm btn-brand">Get the app</a>
+  </div>
+</header>
+
+<main id="top">
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <svg class="hero-lines" viewBox="0 0 1440 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+    <defs>
+      <linearGradient id="lg" x1="0" x2="1">
+        <stop offset="0" stop-color="#0065DA" stop-opacity="0"/>
+        <stop offset=".6" stop-color="#009EF3"/>
+        <stop offset="1" stop-color="#01C7E7"/>
+      </linearGradient>
+    </defs>
+    <g fill="none" stroke-width="1.5">
+      <path class="line-base" d="M-20 610 C 300 600, 520 520, 760 470 S 1060 380, 1100 380"/>
+      <path class="line-base" d="M-20 690 C 360 690, 640 600, 840 540 S 1080 440, 1100 430"/>
+      <path class="line-base" d="M-20 120 C 280 160, 520 260, 760 320 S 1040 360, 1100 360"/>
+      <path class="line-flow" d="M-20 610 C 300 600, 520 520, 760 470 S 1060 380, 1100 380" stroke="url(#lg)"/>
+      <path class="line-flow f2" d="M-20 690 C 360 690, 640 600, 840 540 S 1080 440, 1100 430" stroke="url(#lg)"/>
+      <path class="line-flow f3" d="M-20 120 C 280 160, 520 260, 760 320 S 1040 360, 1100 360" stroke="url(#lg)"/>
+    </g>
+  </svg>
+
+  <div class="wrap hero-in">
+    <div class="hero-copy">
+      <p class="hero-kicker"><span class="pulse"></span>Live in Hyderabad, for cars and two-wheelers</p>
+      <h1>Charge anywhere, drive further.</h1>
+      <p class="lead">Find a working charger, pay from one wallet by rupees or by kWh, and get every unused rupee back the moment you unplug.</p>
+      <div class="hero-cta" id="get">
+        <a href="#" class="store">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3.6 2.3 13.5 12l-9.9 9.7c-.4-.2-.6-.6-.6-1.1V3.4c0-.5.2-.9.6-1.1Zm11 8.6 2.6-2.6 3.3 1.9c.9.5.9 1.8 0 2.3l-3.3 1.9-2.6-2.6L13.6 12l1-1.1ZM5 1.6l10.9 6.3-2.4 2.4L5 1.6Zm8.5 12.1 2.4 2.4L5 22.4l8.5-8.7Z"/></svg>
+          <span><small>Get it on</small>Google Play</span>
+        </a>
+        <a href="#" class="store">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M16.4 12.6c0-2.6 2.1-3.8 2.2-3.9-1.2-1.8-3.1-2-3.7-2-1.6-.2-3.1.9-3.9.9-.8 0-2-.9-3.4-.9-1.7 0-3.3 1-4.2 2.6-1.8 3.1-.5 7.7 1.3 10.2.9 1.2 1.9 2.6 3.2 2.6 1.3-.1 1.8-.8 3.3-.8 1.6 0 2 .8 3.4.8 1.4 0 2.3-1.3 3.1-2.5 1-1.4 1.4-2.8 1.4-2.9 0 0-2.7-1-2.7-4.1ZM13.9 4.9c.7-.9 1.2-2 1-3.2-1 0-2.2.7-3 1.6-.6.7-1.2 1.9-1 3.1 1.1.1 2.3-.6 3-1.5Z"/></svg>
+          <span><small>Download on the</small>App Store</span>
+        </a>
+      </div>
+      <a href="#" class="text-link">Or use it in your browser, no download</a>
+    </div>
+
+    <!-- Live session phone: the signature moment -->
+    <div class="hero-visual">
+      <div class="glow" aria-hidden="true"></div>
+      <div class="phone phone-hero">
+        <div class="ui ui-live" id="hero-live" aria-label="Example charging session at Raidurg Metro">
+          <div class="ui-bar"><span class="ui-back">‹</span><b id="h-title">Charging</b><span></span></div>
+          <p class="ui-sub">Raidurg Metro · GR-2204-A · CCS2 120 kW</p>
+          <div class="ring">
+            <svg viewBox="0 0 200 200" aria-hidden="true">
+              <defs><linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0065DA"/><stop offset="1" stop-color="#01C7E7"/></linearGradient></defs>
+              <circle cx="100" cy="100" r="84" class="ring-track"/>
+              <circle cx="100" cy="100" r="84" class="ring-val" id="h-ring"/>
+            </svg>
+            <div class="ring-mid">
+              <span class="ring-num" id="h-kwh">0.0</span>
+              <span class="ring-of">of 12.5 kWh</span>
+            </div>
+          </div>
+          <div class="ui-stats">
+            <div><b id="h-kw">0</b><span>kW</span></div>
+            <div><b id="h-min">0</b><span>min</span></div>
+            <div><b id="h-bat">38</b><span>% battery</span></div>
+          </div>
+          <div class="ui-hold" id="h-hold">₹500.00 held from wallet</div>
+          <button class="ui-stop" tabindex="-1" id="h-stop">Stop charging</button>
+        </div>
+      </div>
+      <div class="toast toast-a" id="toast-a"><span class="t-ico t-blue">⚡</span><span><b>Charging started</b>Raidurg Metro, connector A</span></div>
+      <div class="toast toast-b" id="toast-b"><span class="t-ico t-green">₹</span><span><b>₹146.00 refunded to wallet</b>12.5 kWh delivered · invoice ready</span></div>
+    </div>
+  </div>
+
+  <div class="ticker" aria-label="Supported standards">
+    <div class="ticker-track">
+      <span>Type 2</span><span>CCS2</span><span>CHAdeMO</span><span>LEV for two-wheelers</span><span>UPI · cards · net-banking</span><span>GST invoices</span><span>OCPP 1.6J &amp; 2.0.1</span><span>OCPI 2.2.1 roaming</span><span>ISO 15118 Plug &amp; Charge</span>
+      <span aria-hidden="true">Type 2</span><span aria-hidden="true">CCS2</span><span aria-hidden="true">CHAdeMO</span><span aria-hidden="true">LEV for two-wheelers</span><span aria-hidden="true">UPI · cards · net-banking</span><span aria-hidden="true">GST invoices</span><span aria-hidden="true">OCPP 1.6J &amp; 2.0.1</span><span aria-hidden="true">OCPI 2.2.1 roaming</span><span aria-hidden="true">ISO 15118 Plug &amp; Charge</span>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS (scroll story) ================= -->
+<section class="story" id="how">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>From parking to paid in five steps</h2>
+      <p>No cash, no cards at the machine, and you know the price before you plug in.</p>
+    </div>
+    <div class="story-in">
+      <div class="story-phone" aria-hidden="true">
+        <div class="phone phone-story"><div class="screen-stack" id="story-stack"></div></div>
+        <div class="story-dots" id="story-dots"></div>
+      </div>
+
+      <ol class="story-steps">
+        <!-- 1 -->
+        <li class="story-step is-active" data-step="1">
+          <div class="step-text">
+            <span class="step-n">1</span>
+            <h3>Scan the charger, or pick it on the map</h3>
+            <p>Point your camera at the QR on the charger and that exact connector opens. Sticker worn off? Type the charger ID instead. There's a torch button for dark basements.</p>
+          </div>
+          <div class="step-screen">
+            <div class="ui ui-scan">
+              <div class="ui-bar"><span class="ui-back">‹</span><b>Scan charger</b><span class="ui-torch">◐</span></div>
+              <div class="viewfinder">
+                <div class="qr" aria-hidden="true"></div>
+                <span class="scanline"></span>
+                <i class="c tl"></i><i class="c tr"></i><i class="c bl"></i><i class="c br"></i>
+              </div>
+              <p class="ui-center">Align the QR code inside the frame</p>
+              <div class="ui-field">Or enter charger ID<span>GR-2204</span></div>
+            </div>
+          </div>
+        </li>
+        <!-- 2 -->
+        <li class="story-step" data-step="2">
+          <div class="step-text">
+            <span class="step-n">2</span>
+            <h3>Choose rupees or kWh</h3>
+            <p>Enter an amount like ₹300 or the units you need. Before you start, you see roughly how much energy that buys, what it costs with GST, and how long it'll take.</p>
+          </div>
+          <div class="step-screen">
+            <div class="ui ui-amount">
+              <div class="ui-bar"><span class="ui-back">‹</span><b>Raidurg Metro</b><span></span></div>
+              <p class="ui-sub">GR-2204-A · CCS2 · 120 kW · ₹24/kWh + GST</p>
+              <div class="seg"><span class="on">₹ Amount</span><span>kWh Units</span></div>
+              <div class="amount">₹300</div>
+              <div class="presets"><span>₹200</span><span class="on">₹300</span><span>₹500</span><span>₹1,000</span></div>
+              <div class="est">
+                <div><span>Energy</span><b>≈ 10.6 kWh</b></div>
+                <div><span>Time</span><b>≈ 11 min</b></div>
+              </div>
+              <div class="ui-wallet"><span>Wallet</span><b>₹1,240.50</b></div>
+              <button class="ui-go" tabindex="-1">Start charging</button>
+            </div>
+          </div>
+        </li>
+        <!-- 3 -->
+        <li class="story-step" data-step="3">
+          <div class="step-text">
+            <span class="step-n">3</span>
+            <h3>The amount is held, not spent</h3>
+            <p>We hold ₹300 from your wallet and tell the charger to start. If it doesn't, the session is marked failed and the hold is released. Wallet short? Top up with UPI right on this screen.</p>
+          </div>
+          <div class="step-screen">
+            <div class="ui ui-auth">
+              <div class="ui-bar"><span></span><b>Starting your session</b><span></span></div>
+              <div class="plug-anim" aria-hidden="true"><span></span></div>
+              <ul class="checks">
+                <li class="done">Verifying user</li>
+                <li class="done">Checking charger</li>
+                <li class="done">Initializing session</li>
+                <li class="doing">Authorizing with charger</li>
+                <li>Starting</li>
+              </ul>
+              <div class="ui-note">Don't unplug the connector</div>
+              <div class="ui-hold">₹300.00 held from wallet</div>
+            </div>
+          </div>
+        </li>
+        <!-- 4 -->
+        <li class="story-step" data-step="4">
+          <div class="step-text">
+            <span class="step-n">4</span>
+            <h3>Watch it charge, stop when you like</h3>
+            <p>Energy delivered, power, time left, and battery % when your car reports it. The session stops by itself when your amount is reached, when you unplug, or when you tap Stop.</p>
+          </div>
+          <div class="step-screen">
+            <div class="ui ui-car">
+              <div class="ui-bar"><span class="ui-back">‹</span><b>Charging</b><span></span></div>
+              <p class="ui-sub">Tata Nexon EV · TS09 EV 4521</p>
+              <svg class="car" viewBox="0 0 360 170" aria-hidden="true">
+                <use href="#ev-car" x="0" y="0" width="360" height="160"/>
+                <path class="car-glow" d="M30 158 L330 158"/>
+              </svg>
+              <div class="bigpct"><b>64</b><span>%</span></div>
+              <div class="ui-stats">
+                <div><b>6.2</b><span>kWh</span></div>
+                <div><b>58</b><span>kW</span></div>
+                <div><b>5</b><span>min left</span></div>
+              </div>
+              <div class="limit"><span>Charge limit</span><b>₹300 · ≈ 10.6 kWh</b></div>
+              <button class="ui-stop" tabindex="-1">Stop charging</button>
+            </div>
+          </div>
+        </li>
+        <!-- 5 -->
+        <li class="story-step" data-step="5">
+          <div class="step-text">
+            <span class="step-n">5</span>
+            <h3>Unused money comes straight back</h3>
+            <p>You pay for the energy you used, nothing more. The rest returns to your wallet instantly, and a GST invoice is ready to download, carrying your GSTIN if you've added one.</p>
+          </div>
+          <div class="step-screen">
+            <div class="ui ui-receipt">
+              <div class="done-badge" aria-hidden="true">✓</div>
+              <b class="ui-h">Charging complete</b>
+              <p class="ui-sub ui-center">Raidurg Metro · 10.0 kWh · 10 min</p>
+              <dl class="bill">
+                <div><dt>Energy charge</dt><dd>₹240.00</dd></div>
+                <div><dt>CGST 9%</dt><dd>₹21.60</dd></div>
+                <div><dt>SGST 9%</dt><dd>₹21.60</dd></div>
+                <div class="tot"><dt>Total paid</dt><dd>₹283.20</dd></div>
+                <div class="ref"><dt>Refunded to wallet</dt><dd>+ ₹16.80</dd></div>
+              </dl>
+              <button class="ui-go ui-ghost" tabindex="-1">Download invoice</button>
+              <div class="stars" aria-hidden="true">★★★★★<span>Rate this station</span></div>
+            </div>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ================= MAP ================= -->
+<section class="mapsec" id="map">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>See which chargers work before you drive there</h2>
+      <p>Every connector shows its live state. Every pin shows whose charger it is. Try the filters.</p>
+    </div>
+
+    <div class="mapui">
+      <div class="map-filters" role="toolbar" aria-label="Filter stations">
+        <button class="fchip on" data-f="all">All</button>
+        <button class="fchip" data-f="ac">AC</button>
+        <button class="fchip" data-f="dc">DC</button>
+        <button class="fchip" data-f="avail">Available now</button>
+        <button class="fchip" data-f="fast">Fast, 50 kW+</button>
+        <button class="fchip" data-f="lev">Two-wheeler</button>
+        <span class="fcount" id="fcount" aria-live="polite">8 stations</span>
+      </div>
+
+      <div class="map-grid">
+        <div class="map" id="mapbox">
+          <svg class="map-art" viewBox="0 0 1000 620" preserveAspectRatio="none" aria-hidden="true">
+            <rect width="1000" height="620" class="m-land"/>
+            <path class="m-park" d="M300 30 C 360 20, 420 60, 410 120 C 400 170, 330 180, 290 150 C 250 120, 250 50, 300 30 Z"/>
+            <path class="m-park" d="M120 400 C 180 380, 240 420, 230 470 C 220 520, 150 530, 110 500 C 80 470, 80 420, 120 400 Z"/>
+            <path class="m-water" d="M560 300 C 600 280, 660 300, 660 345 C 660 395, 610 410, 575 395 C 540 380, 525 320, 560 300 Z"/>
+            <path class="m-water" d="M930 430 C 970 420, 1000 440, 1000 470 L1000 620 L 880 620 C 860 570, 880 450, 930 430 Z"/>
+            <g class="m-road-major">
+              <path d="M0 250 C 200 240, 380 230, 520 260 S 800 330, 1000 360"/>
+              <path d="M420 0 C 430 140, 470 280, 520 400 S 600 560, 640 620"/>
+              <path d="M0 520 C 200 500, 380 460, 560 450 S 860 480, 1000 520"/>
+            </g>
+            <g class="m-road">
+              <path d="M150 0 C 160 120, 200 260, 180 400 S 140 560, 160 620"/>
+              <path d="M0 130 C 200 140, 400 120, 600 150 S 860 200, 1000 180"/>
+              <path d="M700 0 C 690 150, 740 300, 760 420 S 820 560, 860 620"/>
+              <path d="M300 620 C 340 520, 420 420, 600 380 S 900 280, 1000 260"/>
+              <path d="M240 260 C 280 330, 350 380, 470 400"/>
+              <path d="M820 0 C 860 120, 900 200, 1000 230"/>
+            </g>
+            <g class="m-label">
+              <text x="560" y="210">HITEC City</text>
+              <text x="250" y="160">Kondapur</text>
+              <text x="60" y="300">Gachibowli</text>
+              <text x="680" y="440">Jubilee Hills</text>
+              <text x="820" y="600">Banjara Hills</text>
+              <text x="40" y="600">Financial District</text>
+              <text x="300" y="400">Madhapur</text>
+            </g>
+          </svg>
+          <span class="you" style="left:43.5%;top:41.9%" aria-hidden="true"></span>
+          <div id="pins"></div>
+        </div>
+
+        <aside class="stcard" id="stcard" aria-live="polite">
+          <!-- filled by script.js -->
+        </aside>
+      </div>
+      <p class="note">Sample stations from the app's demo data. Operator names and logos are placeholders until partners are announced. Tariffs are per kWh, plus 18% GST.</p>
+    </div>
+
+    <ul class="map-points">
+      <li><b>Notify me</b>Connector busy? We'll tell you when it's free.</li>
+      <li><b>Roaming partners</b>Stations on partner networks appear on the same map and bill to the same wallet.</li>
+      <li><b>Reviews with photos</b>Ratings, comments and up to three photos from drivers who charged there.</li>
+      <li><b>No account needed</b>Browse everything as a guest. We ask for your number only when you start charging.</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ================= WALLET ================= -->
+<section class="wallet" id="wallet">
+  <div class="wrap wallet-in">
+    <div class="wallet-copy">
+      <h2>One wallet for every charger on the network</h2>
+      <p>Top up once with UPI, card or net-banking and charge at any operator. Every rupee in and out is listed, and you can filter by month.</p>
+      <dl class="promises">
+        <div><dt>Unused money returns by itself</dt><dd>Stop early or fill up before your amount runs out, and the rest of the hold comes back straight away.</dd></div>
+        <div><dt>Charger didn't start? Full refund</dt><dd>If no energy was delivered, the session is marked failed and nothing is charged.</dd></div>
+        <div><dt>GST invoices for business</dt><dd>Add your GSTIN once. Every invoice carries it, with CGST and SGST shown separately.</dd></div>
+      </dl>
+    </div>
+
+    <div class="ledger" id="ledger" aria-label="Example wallet history">
+      <div class="ledger-head">
+        <span>Wallet balance</span>
+        <strong id="bal" data-to="1240.50">₹0.00</strong>
+        <div class="ltabs" aria-hidden="true"><span class="on">All</span><span>Top-ups</span><span>Charging</span><span>Refunds</span></div>
+      </div>
+      <ul>
+        <li><span class="lic lic-up">↓</span><span class="lt"><b>Added money</b>UPI · 04 Nov</span><em class="plus">+ ₹1,000.00</em></li>
+        <li><span class="lic lic-chg">⚡</span><span class="lt"><b>Charging hold</b>Raidurg Metro · 05 Nov</span><em>− ₹300.00</em></li>
+        <li><span class="lic lic-ref">↺</span><span class="lt"><b>Refund, unused amount</b>Raidurg Metro · 05 Nov</span><em class="plus">+ ₹16.80</em></li>
+        <li><span class="lic lic-chg">⚡</span><span class="lt"><b>Charging hold</b>Kondapur Metro · 06 Nov</span><em>− ₹200.00</em></li>
+        <li><span class="lic lic-ref">↺</span><span class="lt"><b>Refund, charger didn't start</b>Kondapur Metro · 06 Nov</span><em class="plus">+ ₹200.00</em></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HANDS-FREE ================= -->
+<section class="hands" id="autocharge">
+  <div class="wrap">
+    <div class="section-head">
+      <h2>Or skip the phone entirely</h2>
+      <p>For drivers who charge at the same places every week, and for fleets.</p>
+    </div>
+    <div class="hands-grid">
+      <article class="hand">
+        <div class="hand-art art-auto" aria-hidden="true">
+          <svg viewBox="0 0 440 170">
+            <use href="#ev-car" x="0" y="6" width="360" height="160"/>
+            <path class="ha-cable" d="M318 102 C 330 140, 362 150, 388 122"/>
+            <rect x="384" y="30" width="38" height="128" rx="9" class="ha-post"/>
+            <rect x="392" y="42" width="22" height="16" rx="3" class="ha-screen"/>
+            <circle cx="403" cy="74" r="5" class="ha-led"/>
+            <rect x="390" y="150" width="26" height="8" rx="2" fill="#0a2244"/>
+          </svg>
+          <span class="ha-status">Vehicle recognised · charging started</span>
+        </div>
+        <h3>Autocharge: plug in and walk away</h3>
+        <p>Switch it on for your vehicle once. After the first session, plugging into a supported charger starts charging by itself and bills your wallet. You get a notification at start and stop. On ISO 15118 cars and chargers, Plug &amp; Charge does the same job.</p>
+      </article>
+      <article class="hand">
+        <div class="hand-art art-rfid" aria-hidden="true">
+          <div class="reader"><span class="reader-led"></span><span class="ripple"></span><span class="ripple r2"></span></div>
+          <div class="rcard"><span class="rchip"></span><b>ChargeUI</b><i>•••• 4521</i></div>
+          <span class="ha-status">Card accepted · Kokapet SEZ</span>
+        </div>
+        <h3>RFID card: tap to charge</h3>
+        <p>Link a card by typing the number printed on it, then tap it on the charger. Lost it? Block it from the app in a second. Fleet and company cards bill to the group account, not the driver.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EVERYWHERE ================= -->
+<section class="every" id="apps">
+  <div class="wrap every-in">
+    <div class="every-copy">
+      <h2>Phone, tablet or laptop. One account.</h2>
+      <p>The Android and iOS apps and the web app share your wallet, vehicles and history. Add the web app to your home screen and it works like the installed one.</p>
+      <ul class="ticks">
+        <li>Light by default, with a dark mode for night drives</li>
+        <li>Stay signed in for 7 days, no passwords, just your phone number</li>
+        <li>Alerts when charging starts, finishes, fails or a refund lands</li>
+      </ul>
+    </div>
+    <div class="devices">
+      <div class="laptop"><div class="laptop-bar"><i></i><i></i><i></i></div><img src="assets/screens/desktop.svg" alt="ChargeUI web app on a laptop, showing nearby stations" loading="lazy" width="1440" height="1070"></div>
+      <img class="dev-phone dp-a" src="assets/screens/home-light.svg" alt="ChargeUI app home screen in light mode" loading="lazy" width="390" height="959">
+      <img class="dev-phone dp-b" src="assets/screens/home-dark.svg" alt="ChargeUI app home screen in dark mode" loading="lazy" width="390" height="995">
+    </div>
+  </div>
+</section>
+
+<!-- ================= OPERATORS ================= -->
+<section class="ops" id="operators">
+  <div class="wrap">
+    <div class="ops-head">
+      <div>
+        <h2>Run your chargers on ChargeUI</h2>
+        <p>Bring your stations onto the network under your own brand. Your logo on your pins, your tariffs, and drivers paying from a wallet they already use.</p>
+      </div>
+      <a href="mailto:partners@chargeui.in?subject=Operator%20enquiry" class="btn btn-light">Talk to our team</a>
+    </div>
+
+    <!-- Real admin portal screen (captured from the ChargeUI admin app, mock data) -->
+    <figure class="admin-shot" id="admin">
+      <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span>admin.chargeui.in/dashboard</span></div>
+      <img src="assets/screens/admin-dashboard.jpg" alt="ChargeUI admin portal dashboard: station and charge point counts, energy, revenue and session charts, charger status, station overview, live map and recent alarms" width="2400" height="1500" loading="lazy">
+    </figure>
+    <p class="note note-dark">The ChargeUI admin portal, shown with demo data.</p>
+
+    <div class="ops-grid">
+      <div><h3>Any OCPP charger</h3><p>OCPP 1.6J and 2.0.1 from any OEM. Remote start and stop, soft and hard reset, unlock, firmware updates.</p></div>
+      <div><h3>Problems flagged in 10 minutes</h3><p>A charge point unavailable for 10 minutes alerts the station owner by app and email, every 30 minutes until it's fixed.</p></div>
+      <div><h3>White-label, revenue share</h3><p>Each operator gets its own scope, branding and revenue split. An operator switcher scopes every screen.</p></div>
+      <div><h3>Roaming over OCPI 2.2.1</h3><p>Open your chargers to partner networks and list theirs, with settlement handled.</p></div>
+      <div><h3>Analytics that export</h3><p>Revenue, energy and utilisation by station and charge point, by day, week or month. CSV export everywhere.</p></div>
+      <div><h3>Support and broadcasts</h3><p>Driver tickets with SLAs and refunds to wallet. Push announcements to the drivers you choose.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FAQ ================= -->
+<section class="faq" id="faq">
+  <div class="wrap faq-in">
+    <h2>Questions drivers ask</h2>
+    <div class="faq-list">
+      <details>
+        <summary>Do I need an account to find a charger?</summary>
+        <p>No. Browse the map, stations, prices and reviews as a guest. We ask for your phone number only when you tap Start charging, then bring you back to the same connector.</p>
+      </details>
+      <details>
+        <summary>How do I sign in?</summary>
+        <p>With your 10-digit mobile number and a 6-digit OTP by SMS. There's no password to remember.</p>
+      </details>
+      <details>
+        <summary>Why rupees or kWh, and not battery %?</summary>
+        <p>Chargers measure energy, not your battery. Pick an amount or a number of units, and the session stops when it's reached, when you stop it, or when you unplug.</p>
+      </details>
+      <details>
+        <summary>What happens to the money held from my wallet?</summary>
+        <p>You pay only for the energy delivered. The rest goes back to your wallet automatically when the session ends. If no energy was delivered at all, the whole amount comes back.</p>
+      </details>
+      <details>
+        <summary>Can I book a charger in advance?</summary>
+        <p>Not yet. Charging is start-on-arrival. Tap Notify me on a busy connector to hear when it frees up.</p>
+      </details>
+      <details>
+        <summary>Does it work for scooters and bikes?</summary>
+        <p>Yes. Add your two-wheeler under My vehicles and use the Two-wheeler filter on the map to find LEV connectors.</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FINAL ================= -->
+<section class="final">
+  <div class="wrap final-in">
+    <h2>Your next charge is closer than you think.</h2>
+    <div class="hero-cta">
+      <a href="#" class="store"><span><small>Get it on</small>Google Play</span></a>
+      <a href="#" class="store"><span><small>Download on the</small>App Store</span></a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap footer-in">
+    <img src="assets/logo.png" alt="ChargeUI" class="footer-logo" width="787" height="240">
+    <nav aria-label="Footer">
+      <a href="#how">How it works</a>
+      <a href="#map">Find chargers</a>
+      <a href="#operators">For operators</a>
+      <a href="#faq">FAQ</a>
+      <a href="mailto:support@chargeui.in">Support</a>
+      <a href="#">Terms</a>
+      <a href="#">Privacy</a>
+    </nav>
+    <p>© 2026 ChargeUI. Station photos and data shown are samples.</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
