@@ -273,11 +273,14 @@
     const btns = $$('.flow-steps button', flow);
     const cap = $('#flow-cap');
     const byStage = (sel, k) => $$(sel + `[data-s="${k}"]`, flow);
-    let k = -1, timer = null, auto = true;
+    const sc = $('.flow-scroll', flow), svg = $('.flow-svg', flow);
+    const CENTERS = [80, 238, 395, 600, 790, 1060];
+    let k = -1, timer = null, energised = false, visible = false;
     function show(n) {
       k = n;
+      if (n === 5) energised = true; // after the first full pass, power keeps flowing everywhere
       for (let s = 0; s <= 5; s++) {
-        const live = s <= n;
+        const live = energised || s <= n;
         byStage('.flow-p', s).forEach((p) => p.classList.toggle('live', live));
         byStage('.eq', s).forEach((e) => { e.classList.toggle('live', live); e.classList.toggle('cur', s === n); });
         byStage('.fl-labels g', s).forEach((g) => { g.classList.toggle('live', live); g.classList.toggle('cur', s === n); });
@@ -285,28 +288,28 @@
       btns.forEach((b, i) => { b.classList.toggle('on', i === n); b.classList.toggle('done', i < n); b.setAttribute('aria-selected', i === n); });
       cap.textContent = CAPS[n];
       // On narrow screens the diagram scrolls sideways: keep the current equipment in view.
-      const sc = $('.flow-scroll', flow), svg = $('.flow-svg', flow);
       if (sc.scrollWidth > sc.clientWidth + 4) {
-        const CENTERS = [80, 238, 395, 600, 790, 1060];
         sc.scrollTo({ left: (CENTERS[n] / 1200) * svg.clientWidth - sc.clientWidth / 2, behavior: reduced ? 'auto' : 'smooth' });
       }
     }
-    function loop() {
-      clearInterval(timer);
-      timer = setInterval(() => {
-        if (!auto) return;
-        show(k >= 5 ? 0 : k + 1);
-      }, k >= 5 ? 4000 : 2400);
+    // Self-scheduling loop: never stops for good. A click pauses it briefly, then it carries on.
+    function schedule(delay) {
+      clearTimeout(timer);
+      timer = setTimeout(tick, delay);
     }
-    btns.forEach((b, i) => b.addEventListener('click', () => { auto = false; clearInterval(timer); show(i); }));
-    if (reduced) show(5);
+    function tick() {
+      if (!visible) { schedule(800); return; }
+      const next = k >= 5 ? 0 : k + 1;
+      show(next);
+      schedule(next === 5 ? 4200 : 2600);
+    }
+    btns.forEach((b, i) => b.addEventListener('click', () => { show(i); schedule(7000); }));
+    if (reduced) { energised = true; show(5); }
     else {
-      let started = false;
       onView(flow, (v) => {
-        if (v && !started) { started = true; show(0); loop(); }
-        if (!v) clearInterval(timer);
-        else if (started && auto) loop();
-      }, { threshold: 0.35 });
+        visible = v;
+        if (v && k < 0) { show(0); schedule(2600); }
+      }, { threshold: 0 });
     }
   }
 
