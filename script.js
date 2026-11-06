@@ -313,6 +313,16 @@
     }
   }
 
+  /* ---------- WhatsApp enquiry ----------
+     Set your business WhatsApp number here (country code, digits only, e.g. '919876543210').
+     While it is empty, the WhatsApp button and contact row stay hidden. */
+  const WHATSAPP_NUMBER = '';
+  if (WHATSAPP_NUMBER) {
+    const text = encodeURIComponent('Hi ChargeUI, I would like to know more about your EV charging solutions.');
+    $$('.wa-link').forEach((a) => { a.href = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`; a.hidden = false; });
+    $$('.wa-row').forEach((r) => (r.hidden = false));
+  }
+
   /* ---------- contact: enquiry paths + mailto form ---------- */
   const reqSel = $('#f-req');
   $$('.path').forEach((p) => p.addEventListener('click', () => {
