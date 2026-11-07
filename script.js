@@ -303,7 +303,7 @@
     }));
   }
 
-  /* ---------- driver app story: sticky phone follows the step in view ---------- */
+  /* ---------- user app story: sticky phone follows the step in view ---------- */
   $$('.qr').forEach((box) => {
     const N = 21; let seed = 7; const rnd = () => ((seed = (seed * 9301 + 49297) % 233280) / 233280);
     const inFinder = (x, y) => (x < 8 && y < 8) || (x > N - 9 && y < 8) || (x < 8 && y > N - 9);
