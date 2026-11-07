@@ -262,7 +262,7 @@
   if (gal) {
     const gtabs = $$('.gtab', gal), gimgs = $$('.g-stage img', gal);
     const gcap = $('#g-cap'), gpath = $('#g-path'), gbar = $('#g-bar');
-    const PATHS = ['dashboard', 'analytics', 'alarms', 'transactions', 'assets/stations', 'sessions', 'tickets', 'white-label', 'broadcasts'];
+    const PATHS = ['dashboard', 'analytics', 'alarms', 'transactions', 'assets/stations', 'sessions', 'tickets', 'broadcasts'];
     const MS = 5000;
     let gi = 0, gtimer = null, gvisible = false;
     gal.style.setProperty('--g-ms', MS + 'ms');
@@ -345,7 +345,7 @@
       'The CTPT steps current and voltage down to measurable levels. Thin signal wires feed the meter box beside it, which records every unit.',
       'The HT vacuum circuit breaker (VCB) protects everything after it and cuts the supply instantly if there is a fault.',
       'The transformer steps 11 kV down to 415 V, the voltage your site and chargers use.',
-      'The LT kiosk distributes power to each charger through MCCB and RCD protection.',
+      'The LT panel distributes power to each charger through MCCB and RCD protection.',
       'Power reaches the chargers. From here, ChargeUI\'s CMS monitors every session and balances load across them.',
     ];
     const btns = $$('.flow-steps button', flow);
