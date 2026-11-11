@@ -891,7 +891,41 @@ html { scroll-padding-top: 86px; }
 .lb.over .bay.on .wc-led { fill: #ef4444; filter: drop-shadow(0 0 3px #ef4444); }
 .bay.on:not(.arrive):not(.done) .wc-cable { stroke: #15803d; }
 .bay.asking .wc-cable { stroke: #d97706; }
-.bay-empty { top: auto; bottom: 40px; }
+.bay-empty { top: 52px; bottom: auto; left: 12px; right: auto; text-align: left; }
+/* ---------- v17: animated 2D industry illustrations ---------- */
+.ind-cards li.ill { background: #0b1b2e; }
+.ind-ill { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -2; transition: transform .6s var(--ease); }
+.ind-cards li:hover .ind-ill { transform: scale(1.04); }
+.ind-cards li.ill::after { background: linear-gradient(180deg, rgba(11,27,46,0) 55%, rgba(11,27,46,.94) 82%); }
+.ill-cable { fill: none; stroke: #0b1b2e; stroke-width: 4; stroke-linecap: round; }
+.ill-flow { fill: none; stroke: #4ade80; stroke-width: 2.2; stroke-linecap: round; stroke-dasharray: 3 7; animation: fdash .9s linear infinite; }
+.ill-led { fill: #22c55e; animation: illblink 1.6s ease-in-out infinite; }
+@keyframes illblink { 50% { opacity: .3; } }
+.ill-pulse { transform-box: fill-box; transform-origin: center; animation: illpulse 2s ease-in-out infinite; }
+@keyframes illpulse { 50% { transform: scale(1.14); } }
+.ill-bob { animation: illbob 3s ease-in-out infinite; }
+@keyframes illbob { 50% { transform: translateY(-6px); } }
+.ill-win { animation: illwin 4s steps(1) infinite; }
+@keyframes illwin { 0%, 55% { fill: #fde68a; } 56%, 100% { fill: #cbd5e1; } }
+.ill-rise { animation: illrise 3.3s ease-in infinite; }
+@keyframes illrise { 0% { transform: translateY(40px); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(-20px); opacity: 0; } }
+.ill-link { fill: none; stroke: #16a34a; stroke-width: 2.5; stroke-dasharray: 5 7; animation: fdash 1.2s linear infinite; }
+.ill-road { stroke-dasharray: 14 16; animation: illroad .7s linear infinite; }
+@keyframes illroad { to { stroke-dashoffset: -30; } }
+.ill-spot { opacity: .18; animation: illspot 3s ease-in-out infinite; }
+@keyframes illspot { 50% { opacity: .42; } }
+.ill-glow { opacity: .35; animation: illspot 2.4s ease-in-out infinite; }
+.ill-flag { transform-box: fill-box; transform-origin: left center; animation: illflag 1.6s ease-in-out infinite; }
+@keyframes illflag { 50% { transform: skewY(8deg) scaleX(.9); } }
+.ill-star { animation: illblink 2s ease-in-out infinite; }
+.ill-twinkle { animation: illblink 2.5s ease-in-out infinite; }
+.ill-sheen { animation: illsheen 5s ease-in-out infinite; }
+@keyframes illsheen { 0%, 100% { opacity: .15; } 50% { opacity: .55; } }
+
+/* ---------- v18: merged white-label franchise card ---------- */
+.pillar-merged { grid-column: span 2; }
+@media (max-width: 560px) { .pillar-merged { grid-column: auto; } }
+
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

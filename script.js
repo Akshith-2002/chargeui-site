@@ -64,7 +64,7 @@
       { ico: '⚡', cls: '', t: 'Load rebalanced', s: 'Green Meadows · 4 cars sharing 22 kW' },
       { ico: '!', cls: 'amber', t: 'Ticket #1048 opened automatically', s: 'GR-0419-A fault · assigned to Ravi K.' },
       { ico: '✓', cls: 'green', t: 'Ticket #1048 resolved', s: 'Charger back online in 44 minutes' },
-      { ico: '₹', cls: 'green', t: 'Daily settlement ready', s: 'Green Meadows · ₹9,500 net for yesterday' },
+      { ico: '₹', cls: 'green', t: 'Friendly settlement ready', s: 'Green Meadows · ₹9,500 net for yesterday' },
     ];
     let i = 0;
     const ico = $('#ht-ico'), tt = $('#ht-title'), ts = $('#ht-sub');
@@ -92,7 +92,7 @@
     const bayBox = $('#lb-bays'), toggle = $('#lb-toggle'), range = $('#lb-limit'), playBtn = $('#lb-play');
     const out = $('#lb-limit-out'), totalEl = $('#lb-total'), limitV = $('#lb-limit-v'), fillEl = $('#lb-fill'), mark = $('#lb-limit-mark'), msg = $('#lb-msg');
     const stepEls = $$('#lb-steps li');
-    const names = ['A-101', 'A-204', 'B-002', 'B-305', 'C-110', 'C-402'];
+    const names = ['Priya S.', 'Rahul M.', 'Ananya R.', 'Vikram K.', 'Meera N.', 'Arjun P.'];
     const state = Array(N).fill(false);
     const shown = Array(N).fill(0);
     const soc = Array(N).fill(0);
@@ -119,10 +119,10 @@
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'bay';
-      b.innerHTML = `<span class="bay-id"><span>Bay ${i + 1}</span><span>Flat ${n}</span></span>
+      b.innerHTML = `<span class="bay-id"><span>Bay ${i + 1}</span><span>${n}</span></span>
         <span class="bay-car"><svg class="bay-scene" viewBox="0 0 260 100" aria-hidden="true">
           <rect x="0" y="96" width="260" height="4" class="bs-floor"/>
-          <g class="wc"><rect x="168" y="4" width="26" height="34" rx="5" class="wc-box"/><rect x="173" y="10" width="16" height="10" rx="2" class="wc-scr"/><circle cx="181" cy="28" r="3" class="wc-led"/></g>
+          <g class="wc"><rect x="168" y="4" width="26" height="34" rx="5" class="wc-box"/><circle cx="181" cy="21" r="3.5" class="wc-led"/></g>
           <path class="wc-holster" d="M181 38 C 181 52, 172 58, 186 62"/>
           <g class="ev-g"><use href="#ev-car" x="40" y="20" width="180" height="80"/></g>
           <path class="wc-cable" d="M181 38 C 182 52, 190 62, 199 68"/>
@@ -426,7 +426,7 @@
     onView(it, (v) => { if (v && !played) { played = true; play(); } }, { threshold: 0.45 });
   }
 
-  /* ---------- USP 3: daily settlement ---------- */
+  /* ---------- USP 3: friendly settlement ---------- */
   const st = $('#st');
   if (st) {
     // Illustrative: processing fee 2%, platform fee 3% of gross.
