@@ -79,15 +79,26 @@
     }, 3600);
   }
 
-  /* ---------- USP 1: dynamic AC load management ---------- */
+  /* ---------- USP 1: dynamic AC load management ----------
+     Auto demo loop: a car drives in and asks for full power, the site would go over its
+     sanctioned load, ChargeUI moves power from the cars already charging to the new one
+     (sparks fly between bays); later the longest-charging car finishes, drives off and its
+     power flows back to the others. Any tap or control change stops the loop for manual play. */
   const lb = $('#lb');
   if (lb) {
-    const MAX_KW = 7.4, N = 6;
-    const bayBox = $('#lb-bays'), toggle = $('#lb-toggle'), range = $('#lb-limit');
+    const MAX_KW = 7.4, N = 6, SCALE = 44.4;
+    const bayBox = $('#lb-bays'), toggle = $('#lb-toggle'), range = $('#lb-limit'), playBtn = $('#lb-play');
     const out = $('#lb-limit-out'), totalEl = $('#lb-total'), limitV = $('#lb-limit-v'), fillEl = $('#lb-fill'), mark = $('#lb-limit-mark'), msg = $('#lb-msg');
     const names = ['A-101', 'A-204', 'B-002', 'B-305', 'C-110', 'C-402'];
     const state = Array(N).fill(false);
-    let touched = false;
+    const shown = Array(N).fill(0);      // kW currently displayed per bay (for count animations)
+    let shownTotal = 0;
+    let pending = -1;                    // bay that has just plugged in and is asking for full power
+    let auto = false, visible = false, timers = [];
+    const fx = document.createElement('div');
+    fx.className = 'lb-fx';
+    fx.setAttribute('aria-hidden', 'true');
+
     const bays = names.map((n, i) => {
       const b = document.createElement('button');
       b.type = 'button';
@@ -95,50 +106,191 @@
       b.innerHTML = `<span class="bay-id"><span>Bay ${i + 1}</span><span>Flat ${n}</span></span>
         <span class="bay-car"><svg viewBox="0 0 360 160" aria-hidden="true"><use href="#ev-car"/></svg></span>
         <span class="bay-empty">Empty · tap to plug in</span>
+        <span class="bay-tag" aria-hidden="true"></span>
         <span class="bay-kw"><span class="kw">0.0</span><small>kW</small></span>
         <span class="bay-bar"><i></i></span>`;
-      b.addEventListener('click', () => { touched = true; state[i] = !state[i]; render(); });
+      b.addEventListener('click', () => { stopAuto(); state[i] = !state[i]; render(); });
       bayBox.appendChild(b);
       return b;
     });
-    function render() {
+    bayBox.appendChild(fx);
+
+    // Smoothly count a number element from its shown value to a target.
+    const tween = (el, from, to, ms = 700) => {
+      cancelAnimationFrame(el._raf);
+      if (reduced || Math.abs(to - from) < 0.05) { el.textContent = to.toFixed(1); return; }
+      const t0 = performance.now();
+      const step = (now) => {
+        const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3);
+        el.textContent = (from + (to - from) * e).toFixed(1);
+        if (k < 1) el._raf = requestAnimationFrame(step);
+      };
+      el._raf = requestAnimationFrame(step);
+    };
+
+    const fairShare = (n, limit, on) => (n ? (on ? Math.min(MAX_KW, limit / n) : MAX_KW) : 0);
+
+    function render(note) {
       const limit = +range.value;
       const on = toggle.checked;
-      const n = state.filter(Boolean).length;
-      const share = n ? (on ? Math.min(MAX_KW, limit / n) : MAX_KW) : 0;
-      const total = share * n;
-      const scale = 44.4;
+      const settled = state.map((s, i) => s && i !== pending);
+      const n = settled.filter(Boolean).length;
+      const share = fairShare(n, limit, on);
+      // While a new car is "asking", the others keep their old share and it requests full power.
+      const kw = state.map((s, i) => (!s ? 0 : i === pending ? MAX_KW : (pending >= 0 ? shown[i] : share)));
+      const total = kw.reduce((a, b) => a + b, 0);
       out.textContent = limit + ' kW';
       limitV.textContent = limit;
-      totalEl.textContent = total.toFixed(1);
-      fillEl.style.width = Math.min(100, (total / scale) * 100) + '%';
-      mark.style.left = (limit / scale) * 100 + '%';
+      tween(totalEl, shownTotal, total);
+      shownTotal = total;
+      fillEl.style.width = Math.min(100, (total / SCALE) * 100) + '%';
+      mark.style.left = (limit / SCALE) * 100 + '%';
       const over = total > limit + 0.01;
       lb.classList.toggle('over', over);
       lb.classList.toggle('ok', !over && n > 0);
       bays.forEach((b, i) => {
-        const kw = state[i] ? share : 0;
         b.classList.toggle('on', state[i]);
-        b.setAttribute('aria-label', `Bay ${i + 1}, ${state[i] ? 'car charging at ' + kw.toFixed(1) + ' kilowatts' : 'empty'}. Tap to ${state[i] ? 'unplug' : 'plug in'}.`);
-        $('.kw', b).textContent = kw.toFixed(1);
-        $('.bay-bar i', b).style.width = (kw / MAX_KW) * 100 + '%';
+        b.classList.toggle('asking', i === pending);
+        b.setAttribute('aria-label', `Bay ${i + 1}, ${state[i] ? 'car charging at ' + kw[i].toFixed(1) + ' kilowatts' : 'empty'}. Tap to ${state[i] ? 'unplug' : 'plug in'}.`);
+        tween($('.kw', b), shown[i], kw[i]);
+        shown[i] = kw[i];
+        $('.bay-bar i', b).style.width = (kw[i] / MAX_KW) * 100 + '%';
       });
-      if (!n) msg.textContent = 'Tap a bay to plug a car in.';
+      const all = state.filter(Boolean).length;
+      if (note) msg.textContent = note;
+      else if (!all) msg.textContent = 'Tap a bay to plug a car in.';
       else if (over) msg.textContent = `${total.toFixed(1)} kW is over the ${limit} kW limit. Without load management the main breaker trips and every car stops charging.`;
-      else if (on && share < MAX_KW) msg.textContent = `${n} cars sharing ${limit} kW at ${share.toFixed(1)} kW each. Nothing trips, everyone charges.`;
-      else msg.textContent = `${n} car${n > 1 ? 's' : ''} charging at full ${MAX_KW} kW. Within the limit.`;
+      else if (on && share < MAX_KW) msg.textContent = `${all} cars sharing ${limit} kW at ${share.toFixed(1)} kW each. Nothing trips, everyone charges.`;
+      else msg.textContent = `${all} car${all > 1 ? 's' : ''} charging at full ${MAX_KW} kW. Within the limit.`;
     }
-    toggle.addEventListener('change', () => { touched = true; render(); });
-    range.addEventListener('input', () => { touched = true; render(); });
-    render();
-    // Cars arrive one by one the first time the demo comes into view.
-    let started = false;
-    onView(lb, (v) => {
-      if (!v || started) return;
-      started = true;
-      const order = [0, 2, 4, 1];
-      order.forEach((k, j) => setTimeout(() => { if (!touched) { state[k] = true; render(); } }, reduced ? 0 : 500 + j * 1100));
-    }, { threshold: 0.4 });
+
+    // Energy sparks travelling from one bay's power bar to another's.
+    function sparks(from, to) {
+      if (reduced) return;
+      const box = bayBox.getBoundingClientRect();
+      const a = $('.bay-bar', bays[from]).getBoundingClientRect(), b = $('.bay-bar', bays[to]).getBoundingClientRect();
+      const x0 = a.left + a.width / 2 - box.left, y0 = a.top - box.top;
+      const x1 = b.left + b.width / 2 - box.left, y1 = b.top - box.top;
+      const mx = (x0 + x1) / 2, my = Math.min(y0, y1) - 40 - Math.abs(x1 - x0) * 0.08;
+      for (let k = 0; k < 7; k++) {
+        const s = document.createElement('span');
+        s.className = 'spark';
+        fx.appendChild(s);
+        const anim = s.animate([
+          { transform: `translate(${x0}px, ${y0}px) scale(.4)`, opacity: 0 },
+          { transform: `translate(${x0}px, ${y0 - 6}px) scale(1)`, opacity: 1, offset: 0.12 },
+          { transform: `translate(${mx}px, ${my}px) scale(1.15)`, opacity: 1, offset: 0.55 },
+          { transform: `translate(${x1}px, ${y1}px) scale(.5)`, opacity: 0 },
+        ], { duration: 1000, delay: k * 90, easing: 'cubic-bezier(.45,.05,.35,1)', fill: 'both' });
+        anim.onfinish = () => s.remove();
+      }
+      bays[from].classList.add('give');
+      bays[to].classList.add('gain');
+      later(() => { bays[from].classList.remove('give'); bays[to].classList.remove('gain'); }, 1500);
+    }
+
+    const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
+    const label = (i) => `Bay ${i + 1}`;
+    const list = (arr) => (arr.length < 2 ? arr.join('') : arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1]);
+
+    // Loop state: cars leave first-in-first-out; arrivals rotate through empty bays.
+    let queue = [], nextBay = 0, step = 0;
+    function resetScene() {
+      timers.forEach(clearTimeout); timers = [];
+      fx.textContent = '';
+      bays.forEach((b) => b.classList.remove('arrive', 'depart', 'give', 'gain', 'asking', 'done'));
+      pending = -1;
+      range.value = 22; toggle.checked = true;
+      state.fill(false);
+      [0, 2, 4].forEach((i) => (state[i] = true));
+      queue = [0, 2, 4]; nextBay = 1; step = 0;
+      render();
+    }
+
+    function arrive() {
+      let k = nextBay;
+      while (state[k]) k = (k + 1) % N;
+      nextBay = (k + 2) % N;
+      const donors = queue.slice().sort((x, y) => x - y);
+      const limit = +range.value;
+      const before = fairShare(donors.length, limit, true);
+      const after = fairShare(donors.length + 1, limit, true);
+      state[k] = true; pending = k;
+      $('.bay-tag', bays[k]).textContent = `Needs ${MAX_KW} kW`;
+      bays[k].classList.add('arrive');
+      render(`A car plugs in at ${label(k)} and asks for the full ${MAX_KW} kW. That would take the site to ${(before * donors.length + MAX_KW).toFixed(1)} kW, over the ${limit} kW limit.`);
+      later(() => {
+        donors.forEach((d, j) => later(() => sparks(d, k), j * 160));
+        later(() => {
+          pending = -1;
+          bays[k].classList.remove('arrive');
+          queue.push(k);
+          render(`ChargeUI shifts power: ${list(donors.map(label))} each give ${(before - after).toFixed(1)} kW to ${label(k)}. ${queue.length} cars now share ${limit} kW at ${after.toFixed(1)} kW each.`);
+        }, 450);
+      }, 1700);
+    }
+
+    function depart() {
+      const k = queue.shift();
+      const rest = queue.slice().sort((x, y) => x - y);
+      const limit = +range.value;
+      const after = fairShare(rest.length, limit, true);
+      bays[k].classList.add('done');
+      $('.bay-tag', bays[k]).textContent = 'Fully charged';
+      msg.textContent = `${label(k)} is fully charged and unplugs. Its ${shown[k].toFixed(1)} kW goes back to the ${rest.length} cars still charging.`;
+      later(() => {
+        rest.forEach((r, j) => later(() => sparks(k, r), j * 160));
+        later(() => {
+          bays[k].classList.add('depart');
+          state[k] = false;
+          render(`${rest.length} cars now share ${limit} kW at ${after.toFixed(1)} kW each.`);
+          later(() => bays[k].classList.remove('done', 'depart'), 900);
+        }, 500);
+      }, 1100);
+    }
+
+    function tick() {
+      if (!auto) return;
+      if (!visible) { later(tick, 800); return; }
+      if (step % 2 === 0) { arrive(); later(tick, 5200); } else { depart(); later(tick, 4600); }
+      step++;
+    }
+
+    function startAuto() {
+      auto = true;
+      playBtn.hidden = true;
+      msg.setAttribute('aria-live', 'off');   // don't narrate every loop step to screen readers
+      lb.classList.add('auto');
+      resetScene();
+      later(tick, 1400);
+    }
+    function stopAuto() {
+      if (!auto) return;
+      auto = false;
+      timers.forEach(clearTimeout); timers = [];
+      fx.textContent = '';
+      pending = -1;
+      bays.forEach((b) => b.classList.remove('arrive', 'depart', 'give', 'gain', 'asking', 'done'));
+      msg.setAttribute('aria-live', 'polite');
+      lb.classList.remove('auto');
+      playBtn.hidden = false;
+    }
+
+    toggle.addEventListener('change', () => { stopAuto(); render(); });
+    range.addEventListener('input', () => { stopAuto(); render(); });
+    playBtn.addEventListener('click', startAuto);
+
+    if (reduced) {
+      [0, 2, 4, 1].forEach((i) => (state[i] = true));
+      render();
+    } else {
+      render();
+      let started = false;
+      onView(lb, (v) => {
+        visible = v;
+        if (v && !started) { started = true; startAuto(); }
+      }, { threshold: 0 });
+    }
   }
 
   /* ---------- USP 2: issue tracking timeline ---------- */
