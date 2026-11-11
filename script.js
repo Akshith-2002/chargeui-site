@@ -80,24 +80,40 @@
   }
 
   /* ---------- USP 1: dynamic AC load management ----------
-     Auto demo loop: a car drives in and asks for full power, the site would go over its
-     sanctioned load, ChargeUI moves power from the cars already charging to the new one
-     (sparks fly between bays); later the longest-charging car finishes, drives off and its
-     power flows back to the others. Any tap or control change stops the loop for manual play. */
+     Wiring view: an LT panel sits between two rows of bays with a cable to each charger.
+     Current flows along each cable (thicker and faster with more kW). Auto loop:
+     a car drives in, asks for full power and the site goes over its limit; sparks carry
+     power from the other cars down their cables, along the panel bus and up to the new car.
+     Later the fullest car finishes, its power flows back to the others and it drives off.
+     Any tap or control change stops the loop for manual play. */
   const lb = $('#lb');
   if (lb) {
     const MAX_KW = 7.4, N = 6, SCALE = 44.4;
     const bayBox = $('#lb-bays'), toggle = $('#lb-toggle'), range = $('#lb-limit'), playBtn = $('#lb-play');
     const out = $('#lb-limit-out'), totalEl = $('#lb-total'), limitV = $('#lb-limit-v'), fillEl = $('#lb-fill'), mark = $('#lb-limit-mark'), msg = $('#lb-msg');
+    const stepEls = $$('#lb-steps li');
     const names = ['A-101', 'A-204', 'B-002', 'B-305', 'C-110', 'C-402'];
     const state = Array(N).fill(false);
-    const shown = Array(N).fill(0);      // kW currently displayed per bay (for count animations)
-    let shownTotal = 0;
-    let pending = -1;                    // bay that has just plugged in and is asking for full power
+    const shown = Array(N).fill(0);
+    const soc = Array(N).fill(0);
+    let shownTotal = 0, pending = -1, arriving = -1, leaving = -1;
     let auto = false, visible = false, timers = [];
-    const fx = document.createElement('div');
-    fx.className = 'lb-fx';
-    fx.setAttribute('aria-hidden', 'true');
+    const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
+
+    // --- layout: bays 1-3, panel bus, bays 4-6; SVG wires underneath; sparks layer on top
+    const NS = 'http://www.w3.org/2000/svg';
+    const wires = document.createElementNS(NS, 'svg');
+    wires.setAttribute('class', 'lb-wires');
+    wires.setAttribute('aria-hidden', 'true');
+    const mk = (cls) => { const p = document.createElementNS(NS, 'path'); p.setAttribute('class', cls); wires.appendChild(p); return p; };
+    const busBase = mk('w-base w-bus'), wBase = names.map(() => mk('w-base'));
+    const busL = mk('w-flow'), busR = mk('w-flow'), wFlow = names.map(() => mk('w-flow'));
+    bayBox.appendChild(wires);
+
+    const bus = document.createElement('div');
+    bus.className = 'lb-bus';
+    bus.innerHTML = '<span class="lbp"><i class="lbp-led"></i><span>LT panel</span><b id="lb-bus-lim">22 kW max</b></span>';
+    const busLim = $('#lb-bus-lim', bus) || bus.querySelector('b');
 
     const bays = names.map((n, i) => {
       const b = document.createElement('button');
@@ -105,42 +121,84 @@
       b.className = 'bay';
       b.innerHTML = `<span class="bay-id"><span>Bay ${i + 1}</span><span>Flat ${n}</span></span>
         <span class="bay-car"><svg viewBox="0 0 360 160" aria-hidden="true"><use href="#ev-car"/></svg></span>
-        <span class="bay-empty">Empty · tap to plug in</span>
+        <span class="bay-empty">Empty</span>
         <span class="bay-tag" aria-hidden="true"></span>
-        <span class="bay-kw"><span class="kw">0.0</span><small>kW</small></span>
+        <span class="bay-row"><span class="bay-kw"><span class="kw">0.0</span><small>kW</small></span><span class="bay-soc"><i class="bat"><i></i></i><span class="pct">0%</span></span></span>
         <span class="bay-bar"><i></i></span>`;
-      b.addEventListener('click', () => { stopAuto(); state[i] = !state[i]; render(); });
-      bayBox.appendChild(b);
+      b.addEventListener('click', () => {
+        stopAuto();
+        state[i] = !state[i];
+        if (state[i] && soc[i] < 5) { soc[i] = 20 + Math.round(Math.random() * 20); paintSoc(i); }
+        render();
+      });
       return b;
     });
+    bays.slice(0, 3).forEach((b) => bayBox.appendChild(b));
+    bayBox.appendChild(bus);
+    bays.slice(3).forEach((b) => bayBox.appendChild(b));
+    const fx = document.createElement('div');
+    fx.className = 'lb-fx';
+    fx.setAttribute('aria-hidden', 'true');
     bayBox.appendChild(fx);
 
-    // Smoothly count a number element from its shown value to a target.
+    function geo() {
+      const box = bayBox.getBoundingClientRect(), br = bus.getBoundingClientRect();
+      const y = br.top - box.top + br.height / 2;
+      const pts = bays.map((b, i) => {
+        const r = b.getBoundingClientRect();
+        return { x: r.left - box.left + r.width / 2, edge: i < 3 ? r.bottom - box.top : r.top - box.top };
+      });
+      const cx = br.left - box.left + br.width / 2;
+      return { w: box.width, h: box.height, y, cx, pts };
+    }
+    function drawWires() {
+      const g = geo();
+      wires.setAttribute('viewBox', `0 0 ${g.w} ${g.h}`);
+      const xs = g.pts.map((p) => p.x), xmin = Math.min(...xs), xmax = Math.max(...xs);
+      busBase.setAttribute('d', `M${xmin} ${g.y} L${xmax} ${g.y}`);
+      busL.setAttribute('d', `M${g.cx} ${g.y} L${xmin} ${g.y}`);
+      busR.setAttribute('d', `M${g.cx} ${g.y} L${xmax} ${g.y}`);
+      g.pts.forEach((p, i) => {
+        const d = `M${p.x} ${g.y} L${p.x} ${p.edge}`;
+        wBase[i].setAttribute('d', d);
+        wFlow[i].setAttribute('d', d);
+      });
+    }
+    const setFlow = (p, k, on) => {
+      p.classList.toggle('on', on);
+      p.style.strokeWidth = (1.6 + k * 0.42).toFixed(2);
+      p.style.animationDuration = Math.max(0.35, 1.5 - k * 0.15).toFixed(2) + 's';
+    };
+
+    const paintSoc = (i) => {
+      $('.pct', bays[i]).textContent = Math.round(soc[i]) + '%';
+      $('.bat i', bays[i]).style.width = soc[i] + '%';
+    };
+
     const tween = (el, from, to, ms = 700) => {
       cancelAnimationFrame(el._raf);
       if (reduced || Math.abs(to - from) < 0.05) { el.textContent = to.toFixed(1); return; }
       const t0 = performance.now();
-      const step = (now) => {
+      const stepFn = (now) => {
         const k = Math.min(1, (now - t0) / ms), e = 1 - Math.pow(1 - k, 3);
         el.textContent = (from + (to - from) * e).toFixed(1);
-        if (k < 1) el._raf = requestAnimationFrame(step);
+        if (k < 1) el._raf = requestAnimationFrame(stepFn);
       };
-      el._raf = requestAnimationFrame(step);
+      el._raf = requestAnimationFrame(stepFn);
     };
-
     const fairShare = (n, limit, on) => (n ? (on ? Math.min(MAX_KW, limit / n) : MAX_KW) : 0);
 
     function render(note) {
       const limit = +range.value;
       const on = toggle.checked;
-      const settled = state.map((s, i) => s && i !== pending);
+      const settled = state.map((s, i) => s && i !== pending && i !== arriving);
       const n = settled.filter(Boolean).length;
       const share = fairShare(n, limit, on);
-      // While a new car is "asking", the others keep their old share and it requests full power.
-      const kw = state.map((s, i) => (!s ? 0 : i === pending ? MAX_KW : (pending >= 0 ? shown[i] : share)));
+      const kw = state.map((s, i) => (!s || i === arriving ? 0 : i === pending ? MAX_KW : pending >= 0 ? shown[i] : share));
       const total = kw.reduce((a, b) => a + b, 0);
       out.textContent = limit + ' kW';
       limitV.textContent = limit;
+      busLim.textContent = limit + ' kW max';
       tween(totalEl, shownTotal, total);
       shownTotal = total;
       fillEl.style.width = Math.min(100, (total / SCALE) * 100) + '%';
@@ -155,7 +213,11 @@
         tween($('.kw', b), shown[i], kw[i]);
         shown[i] = kw[i];
         $('.bay-bar i', b).style.width = (kw[i] / MAX_KW) * 100 + '%';
+        if (state[i]) paintSoc(i);
       });
+      drawWires();
+      [busL, busR].forEach((p) => setFlow(p, Math.min(MAX_KW, total / 2.5), total > 0.05));
+      wFlow.forEach((p, i) => { setFlow(p, kw[i], kw[i] > 0.05); p.classList.toggle('ask', i === pending); });
       const all = state.filter(Boolean).length;
       if (note) msg.textContent = note;
       else if (!all) msg.textContent = 'Tap a bay to plug a car in.';
@@ -164,124 +226,164 @@
       else msg.textContent = `${all} car${all > 1 ? 's' : ''} charging at full ${MAX_KW} kW. Within the limit.`;
     }
 
-    // Energy sparks travelling from one bay's power bar to another's.
-    function sparks(from, to) {
+    // Sparks travel down the donor's cable, along the panel bus and up the receiver's cable.
+    function sparks(from, to, n = 6) {
       if (reduced) return;
-      const box = bayBox.getBoundingClientRect();
-      const a = $('.bay-bar', bays[from]).getBoundingClientRect(), b = $('.bay-bar', bays[to]).getBoundingClientRect();
-      const x0 = a.left + a.width / 2 - box.left, y0 = a.top - box.top;
-      const x1 = b.left + b.width / 2 - box.left, y1 = b.top - box.top;
-      const mx = (x0 + x1) / 2, my = Math.min(y0, y1) - 40 - Math.abs(x1 - x0) * 0.08;
-      for (let k = 0; k < 7; k++) {
+      const g = geo(), a = g.pts[from], b = g.pts[to];
+      const P = [[a.x, a.edge], [a.x, g.y], [b.x, g.y], [b.x, b.edge]];
+      const seg = [1, 2, 3].map((k) => Math.hypot(P[k][0] - P[k - 1][0], P[k][1] - P[k - 1][1]));
+      const L = seg.reduce((x, y) => x + y, 0) || 1;
+      let acc = 0;
+      const offs = [0, ...seg.map((s) => (acc += s) / L)];
+      offs[3] = 1;
+      for (let k = 0; k < n; k++) {
         const s = document.createElement('span');
         s.className = 'spark';
         fx.appendChild(s);
-        const anim = s.animate([
-          { transform: `translate(${x0}px, ${y0}px) scale(.4)`, opacity: 0 },
-          { transform: `translate(${x0}px, ${y0 - 6}px) scale(1)`, opacity: 1, offset: 0.12 },
-          { transform: `translate(${mx}px, ${my}px) scale(1.15)`, opacity: 1, offset: 0.55 },
-          { transform: `translate(${x1}px, ${y1}px) scale(.5)`, opacity: 0 },
-        ], { duration: 1000, delay: k * 90, easing: 'cubic-bezier(.45,.05,.35,1)', fill: 'both' });
+        const anim = s.animate(P.map((p, j) => ({
+          transform: `translate(${p[0]}px, ${p[1]}px) scale(${j === 0 || j === 3 ? 0.6 : 1})`,
+          opacity: j === 0 ? 0 : j === 3 ? 0.2 : 1,
+          offset: offs[j],
+        })), { duration: 600 + L * 1.6, delay: k * 90, easing: 'cubic-bezier(.4,0,.3,1)', fill: 'both' });
         anim.onfinish = () => s.remove();
       }
       bays[from].classList.add('give');
       bays[to].classList.add('gain');
-      later(() => { bays[from].classList.remove('give'); bays[to].classList.remove('gain'); }, 1500);
+      later(() => { bays[from].classList.remove('give'); bays[to].classList.remove('gain'); }, 1600);
     }
 
-    const later = (fn, ms) => { const t = setTimeout(fn, ms); timers.push(t); return t; };
+    const setStep = (k, warn) => stepEls.forEach((el, i) => { el.classList.toggle('on', i === k); el.classList.toggle('warn', i === k && !!warn); });
     const label = (i) => `Bay ${i + 1}`;
     const list = (arr) => (arr.length < 2 ? arr.join('') : arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1]);
+    const onBays = () => state.map((s, i) => (s ? i : -1)).filter((i) => i >= 0);
 
-    // Loop state: cars leave first-in-first-out; arrivals rotate through empty bays.
-    let queue = [], nextBay = 0, step = 0;
+    let nextBay = 1, step = 0;
+    const PLAN = ['arrive', 'arrive', 'depart', 'depart'];
+
     function resetScene() {
       timers.forEach(clearTimeout); timers = [];
       fx.textContent = '';
       bays.forEach((b) => b.classList.remove('arrive', 'depart', 'give', 'gain', 'asking', 'done'));
-      pending = -1;
+      pending = arriving = leaving = -1;
       range.value = 22; toggle.checked = true;
-      state.fill(false);
-      [0, 2, 4].forEach((i) => (state[i] = true));
-      queue = [0, 2, 4]; nextBay = 1; step = 0;
+      state.fill(false); soc.fill(0);
+      [[0, 64], [2, 43], [4, 28]].forEach(([i, v]) => { state[i] = true; soc[i] = v; });
+      nextBay = 1; step = 0;
+      setStep(-1);
       render();
     }
 
     function arrive() {
       let k = nextBay;
-      while (state[k]) k = (k + 1) % N;
+      for (let j = 0; j < N && state[k]; j++) k = (k + 1) % N;
       nextBay = (k + 2) % N;
-      const donors = queue.slice().sort((x, y) => x - y);
+      const donors = onBays();
       const limit = +range.value;
       const before = fairShare(donors.length, limit, true);
       const after = fairShare(donors.length + 1, limit, true);
-      state[k] = true; pending = k;
+      state[k] = true; arriving = k;
+      soc[k] = 18 + Math.round(Math.random() * 14);
       $('.bay-tag', bays[k]).textContent = `Needs ${MAX_KW} kW`;
       bays[k].classList.add('arrive');
-      render(`A car plugs in at ${label(k)} and asks for the full ${MAX_KW} kW. That would take the site to ${(before * donors.length + MAX_KW).toFixed(1)} kW, over the ${limit} kW limit.`);
+      setStep(0);
+      render(`A car pulls into ${label(k)} and plugs in.`);
       later(() => {
-        donors.forEach((d, j) => later(() => sparks(d, k), j * 160));
+        arriving = -1; pending = k;
+        setStep(1, true);
+        render(`${label(k)} asks for the full ${MAX_KW} kW. The site would draw ${(before * donors.length + MAX_KW).toFixed(1)} kW, over its ${limit} kW limit.`);
         later(() => {
-          pending = -1;
-          bays[k].classList.remove('arrive');
-          queue.push(k);
-          render(`ChargeUI shifts power: ${list(donors.map(label))} each give ${(before - after).toFixed(1)} kW to ${label(k)}. ${queue.length} cars now share ${limit} kW at ${after.toFixed(1)} kW each.`);
-        }, 450);
-      }, 1700);
+          setStep(2);
+          donors.forEach((d, j) => later(() => sparks(d, k), j * 180));
+          later(() => {
+            pending = -1;
+            bays[k].classList.remove('arrive');
+            render(`ChargeUI moves ${(before - after).toFixed(1)} kW from each of ${list(donors.map(label))} to ${label(k)}. ${donors.length + 1} cars now share ${limit} kW at ${after.toFixed(1)} kW each.`);
+          }, 700);
+        }, 1700);
+      }, 1000);
     }
 
     function depart() {
-      const k = queue.shift();
-      const rest = queue.slice().sort((x, y) => x - y);
+      const cars = onBays();
+      const k = cars.reduce((a, b) => (soc[b] > soc[a] ? b : a), cars[0]);
+      const rest = cars.filter((i) => i !== k);
       const limit = +range.value;
       const after = fairShare(rest.length, limit, true);
-      bays[k].classList.add('done');
-      $('.bay-tag', bays[k]).textContent = 'Fully charged';
-      msg.textContent = `${label(k)} is fully charged and unplugs. Its ${shown[k].toFixed(1)} kW goes back to the ${rest.length} cars still charging.`;
+      leaving = k;
+      setStep(3);
+      const from = soc[k], t0 = performance.now();
+      const fill = (now) => {
+        const e = Math.min(1, (now - t0) / 800);
+        soc[k] = from + (100 - from) * e; paintSoc(k);
+        if (e < 1 && leaving === k) requestAnimationFrame(fill);
+      };
+      requestAnimationFrame(fill);
       later(() => {
-        rest.forEach((r, j) => later(() => sparks(k, r), j * 160));
+        bays[k].classList.add('done');
+        $('.bay-tag', bays[k]).textContent = 'Fully charged';
+        msg.textContent = `${label(k)} is fully charged and unplugs. Its ${shown[k].toFixed(1)} kW goes back to the ${rest.length} cars still charging.`;
         later(() => {
-          bays[k].classList.add('depart');
-          state[k] = false;
-          render(`${rest.length} cars now share ${limit} kW at ${after.toFixed(1)} kW each.`);
-          later(() => bays[k].classList.remove('done', 'depart'), 900);
-        }, 500);
-      }, 1100);
+          rest.forEach((r, j) => later(() => sparks(k, r), j * 180));
+          later(() => {
+            bays[k].classList.add('depart');
+            state[k] = false; leaving = -1; soc[k] = 0;
+            render(`${rest.length} cars now share ${limit} kW at ${after.toFixed(1)} kW each.`);
+            later(() => bays[k].classList.remove('done', 'depart'), 900);
+          }, 700);
+        }, 900);
+      }, 800);
     }
 
     function tick() {
       if (!auto) return;
       if (!visible) { later(tick, 800); return; }
-      if (step % 2 === 0) { arrive(); later(tick, 5200); } else { depart(); later(tick, 4600); }
+      let what = PLAN[step % PLAN.length];
+      const count = onBays().length;
+      if (what === 'arrive' && count >= 5) what = 'depart';
+      if (what === 'depart' && count <= 2) what = 'arrive';
       step++;
+      if (what === 'arrive') { arrive(); later(tick, 6400); } else { depart(); later(tick, 5600); }
     }
 
     function startAuto() {
       auto = true;
       playBtn.hidden = true;
-      msg.setAttribute('aria-live', 'off');   // don't narrate every loop step to screen readers
+      msg.setAttribute('aria-live', 'off');
       lb.classList.add('auto');
       resetScene();
-      later(tick, 1400);
+      later(tick, 1500);
     }
     function stopAuto() {
       if (!auto) return;
       auto = false;
       timers.forEach(clearTimeout); timers = [];
       fx.textContent = '';
-      pending = -1;
+      pending = arriving = leaving = -1;
       bays.forEach((b) => b.classList.remove('arrive', 'depart', 'give', 'gain', 'asking', 'done'));
+      setStep(-1);
       msg.setAttribute('aria-live', 'polite');
       lb.classList.remove('auto');
       playBtn.hidden = false;
     }
 
+    // Batteries fill while cars charge (only while the demo is on screen).
+    setInterval(() => {
+      if (!visible || reduced) return;
+      state.forEach((s, i) => {
+        if (!s || i === arriving || i === leaving) return;
+        soc[i] = Math.min(97, soc[i] + shown[i] * 0.06);
+        paintSoc(i);
+      });
+    }, 300);
+
     toggle.addEventListener('change', () => { stopAuto(); render(); });
     range.addEventListener('input', () => { stopAuto(); render(); });
     playBtn.addEventListener('click', startAuto);
+    if ('ResizeObserver' in window) new ResizeObserver(() => drawWires()).observe(bayBox);
+    addEventListener('load', drawWires);
 
     if (reduced) {
-      [0, 2, 4, 1].forEach((i) => (state[i] = true));
+      [[0, 64], [1, 30], [2, 43], [4, 28]].forEach(([i, v]) => { state[i] = true; soc[i] = v; });
       render();
     } else {
       render();
