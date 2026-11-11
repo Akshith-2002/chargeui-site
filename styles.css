@@ -205,9 +205,10 @@ h4 { font-size: 17px; line-height: 1.3; font-weight: 700; letter-spacing: -0.01e
 .bay:hover { border-color: var(--sky); }
 .bay.on { border-style: solid; border-color: #bbe5c8; background: linear-gradient(180deg, #f3fbf5, #fff); }
 .bay-id { display: flex; justify-content: space-between; font-size: 12px; font-weight: 700; color: var(--muted); }
-.bay-car { height: 40px; display: grid; place-items: center; }
-.bay-car svg { width: 100%; height: 40px; opacity: 0; transform: translateX(-14px); transition: opacity .35s, transform .45s var(--ease); }
-.bay.on .bay-car svg { opacity: 1; transform: none; }
+.bay-car { display: block; }
+.bay-scene { display: block; width: 100%; height: auto; overflow: hidden; }
+.ev-g { opacity: 0; transform: translateX(14px); transition: opacity .35s, transform .45s var(--ease); }
+.bay.on .ev-g { opacity: 1; transform: none; }
 .bay-empty { position: absolute; left: 0; right: 0; top: 44px; text-align: center; font-size: 12px; color: var(--muted); font-weight: 600; }
 .bay.on .bay-empty { display: none; }
 .bay-kw { font-family: var(--display); font-weight: 700; font-size: 17px; font-variant-numeric: tabular-nums; }
@@ -817,10 +818,10 @@ html { scroll-padding-top: 86px; }
 .bay.asking .bay-bar i { background: #f59e0b; }
 .bay.asking .bay-kw { color: var(--amber); }
 .lb.over .bay.asking .bay-bar i { background: #f59e0b; }
-@keyframes drivein { 0% { transform: translateX(-130%); opacity: 0; } 30% { opacity: 1; } 80% { transform: translateX(4%); } 100% { transform: none; opacity: 1; } }
-@keyframes driveout { 0% { transform: none; opacity: 1; } 100% { transform: translateX(140%); opacity: 0; } }
-.bay.arrive .bay-car svg { animation: drivein .9s var(--ease) both; }
-.bay.depart .bay-car svg { animation: driveout .8s cubic-bezier(.55,0,.8,.4) both; }
+@keyframes drivein { 0% { transform: translateX(240px); opacity: 1; } 82% { transform: translateX(-6px); } 100% { transform: none; opacity: 1; } }
+@keyframes driveout { 0% { transform: none; opacity: 1; } 100% { transform: translateX(-260px); opacity: 1; } }
+.bay.arrive .ev-g { animation: drivein 1.1s var(--ease) both; }
+.bay.depart .ev-g { animation: driveout .9s cubic-bezier(.55,0,.8,.4) both; }
 .bay-tag { position: absolute; left: 50%; top: -11px; transform: translate(-50%, 4px); padding: 3px 10px; border-radius: 999px; font-size: 11.5px; font-weight: 700; white-space: nowrap; opacity: 0; transition: opacity .3s, transform .3s var(--ease); z-index: 2; }
 .bay.done .bay-tag { opacity: 1; transform: translate(-50%, 0); background: var(--green); color: #fff; }
 .bay.asking .bay-tag { opacity: 1; transform: translate(-50%, 0); background: #f59e0b; color: #fff; }
@@ -874,6 +875,23 @@ html { scroll-padding-top: 86px; }
 }
 @media (max-width: 480px) { .bays { grid-template-columns: repeat(3, 1fr); } }
 
+/* ---------- v16: charging station in each bay ---------- */
+.bs-floor { fill: #e3e8ef; }
+.wc-box { fill: #0b1b2e; }
+.wc-scr { fill: #13283f; transition: fill .3s; }
+.wc-led { fill: #94a3b8; transition: fill .3s; }
+.wc-holster, .wc-cable { fill: none; stroke: #1e293b; stroke-width: 4; stroke-linecap: round; transition: opacity .3s; }
+.wc-cable { opacity: 0; }
+.bay.on:not(.arrive):not(.done):not(.depart) .wc-cable { opacity: 1; }
+.bay.on:not(.arrive):not(.done):not(.depart) .wc-holster { opacity: 0; }
+.bay.on .wc-led { fill: #22c55e; filter: drop-shadow(0 0 3px #22c55e); }
+.bay.on .wc-scr { fill: #14532d; }
+.bay.asking .wc-led { fill: #f59e0b; filter: drop-shadow(0 0 3px #f59e0b); }
+.bay.asking .wc-scr { fill: #78350f; }
+.lb.over .bay.on .wc-led { fill: #ef4444; filter: drop-shadow(0 0 3px #ef4444); }
+.bay.on:not(.arrive):not(.done) .wc-cable { stroke: #15803d; }
+.bay.asking .wc-cable { stroke: #d97706; }
+.bay-empty { top: auto; bottom: 40px; }
 /* ---------- reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

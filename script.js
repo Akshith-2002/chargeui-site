@@ -120,7 +120,13 @@
       b.type = 'button';
       b.className = 'bay';
       b.innerHTML = `<span class="bay-id"><span>Bay ${i + 1}</span><span>Flat ${n}</span></span>
-        <span class="bay-car"><svg viewBox="0 0 360 160" aria-hidden="true"><use href="#ev-car"/></svg></span>
+        <span class="bay-car"><svg class="bay-scene" viewBox="0 0 260 100" aria-hidden="true">
+          <rect x="0" y="96" width="260" height="4" class="bs-floor"/>
+          <g class="wc"><rect x="168" y="4" width="26" height="34" rx="5" class="wc-box"/><rect x="173" y="10" width="16" height="10" rx="2" class="wc-scr"/><circle cx="181" cy="28" r="3" class="wc-led"/></g>
+          <path class="wc-holster" d="M181 38 C 181 52, 172 58, 186 62"/>
+          <g class="ev-g"><use href="#ev-car" x="40" y="20" width="180" height="80"/></g>
+          <path class="wc-cable" d="M181 38 C 182 52, 190 62, 199 68"/>
+        </svg></span>
         <span class="bay-empty">Empty</span>
         <span class="bay-tag" aria-hidden="true"></span>
         <span class="bay-row"><span class="bay-kw"><span class="kw">0.0</span><small>kW</small></span><span class="bay-soc"><i class="bat"><i></i></i><span class="pct">0%</span></span></span>
